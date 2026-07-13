@@ -1,0 +1,501 @@
+/* Custom Stylesheet for Walmart Signage Studio */
+
+:root {
+    /* Brand Colors */
+    --walmart-blue: #0071CE;
+    --walmart-yellow: #FFC220;
+    --walmart-white: #FFFFFF;
+    --walmart-light-blue: #76B2E6;
+
+    /* Theme colors (UI Slate Theme) */
+    --bg-dark: #0a0f1d;
+    --bg-sidebar: #131b2e;
+    --bg-card: #1c2742;
+    --border-color: #2e3d60;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-success: #10b981;
+    --accent-glow: rgba(0, 113, 206, 0.4);
+
+    /* Fonts */
+    --font-outfit: 'Outfit', sans-serif;
+    --font-montserrat: 'Montserrat', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+
+    /* Spacing & Borders */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.4);
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset and Core Layout */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-outfit);
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 380px;
+    min-width: 380px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-shadow: var(--shadow-lg);
+    z-index: 10;
+}
+
+.sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.brand h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--walmart-white) 60%, var(--walmart-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Mini Walmart Spark logo in title */
+.spark-logo-mini {
+    width: 24px;
+    height: 24px;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="-21 -21 42 42" xmlns="http://www.w3.org/2000/svg"><g fill="%23FFC220"><path d="M -1.5 -6 A 1.5 1.5 0 0 0 1.5 -6 L 2.5 -18 A 2.5 2.5 0 0 0 -2.5 -18 Z"/><path d="M -1.5 -6 A 1.5 1.5 0 0 0 1.5 -6 L 2.5 -18 A 2.5 2.5 0 0 0 -2.5 -18 Z" transform="rotate(60)"/><path d="M -1.5 -6 A 1.5 1.5 0 0 0 1.5 -6 L 2.5 -18 A 2.5 2.5 0 0 0 -2.5 -18 Z" transform="rotate(120)"/><path d="M -1.5 -6 A 1.5 1.5 0 0 0 1.5 -6 L 2.5 -18 A 2.5 2.5 0 0 0 -2.5 -18 Z" transform="rotate(180)"/><path d="M -1.5 -6 A 1.5 1.5 0 0 0 1.5 -6 L 2.5 -18 A 2.5 2.5 0 0 0 -2.5 -18 Z" transform="rotate(240)"/><path d="M -1.5 -6 A 1.5 1.5 0 0 0 1.5 -6 L 2.5 -18 A 2.5 2.5 0 0 0 -2.5 -18 Z" transform="rotate(300)"/></g></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: rotateSpark 20s linear infinite;
+}
+
+@keyframes rotateSpark {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.control-sections {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.control-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.control-card:hover {
+    border-color: var(--walmart-blue);
+    box-shadow: 0 0 10px rgba(0, 113, 206, 0.2);
+}
+
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--walmart-white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-title i {
+    color: var(--walmart-yellow);
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: var(--font-outfit);
+    font-size: 0.9rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--walmart-blue);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.half {
+    width: 50%;
+}
+
+.third {
+    width: 33.33%;
+}
+
+.two-thirds {
+    width: 66.66%;
+}
+
+.one-third {
+    width: 33.33%;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 100%;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: normal;
+    margin-top: 8px;
+}
+
+.checkbox-label input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--walmart-blue);
+}
+
+.help-text {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.25;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Sidebar Actions & Buttons */
+.sidebar-actions {
+    padding: 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(10, 15, 29, 0.4);
+}
+
+.btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-outfit);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background-color: var(--walmart-blue);
+    color: var(--walmart-white);
+}
+
+.btn-primary:hover {
+    background-color: #005ea8;
+    box-shadow: 0 0 15px rgba(0, 113, 206, 0.4);
+}
+
+.btn-secondary {
+    background-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: #3b4e78;
+}
+
+.btn-tertiary {
+    background: transparent;
+    border: 1px dashed var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-tertiary:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+/* Preview Viewport Styles */
+.preview-viewport {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--bg-dark);
+    /* Dotted background pattern like Figma */
+    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.preview-header {
+    background-color: rgba(19, 27, 46, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 5;
+}
+
+.preview-title-bar h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.preview-title-bar .badge {
+    font-size: 0.75rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+}
+
+.preview-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.preview-zoom-controls input[type="range"] {
+    width: 120px;
+    accent-color: var(--walmart-blue);
+    cursor: pointer;
+}
+
+#zoom-value {
+    min-width: 40px;
+    text-align: right;
+    font-weight: 600;
+}
+
+/* Active Preview Area where SVGs reside */
+.preview-area {
+    flex-grow: 1;
+    overflow: auto;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.loading-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+
+/* Design Notes and Improvements Panel */
+.improvements-bar {
+    background-color: rgba(19, 27, 46, 0.9);
+    border-top: 1px solid var(--border-color);
+    padding: 16px 32px;
+    z-index: 5;
+}
+
+.info-card {
+    border-left: 3px solid var(--walmart-yellow);
+    padding-left: 16px;
+}
+
+.info-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--walmart-white);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-card h4 i {
+    color: var(--walmart-yellow);
+}
+
+.info-card p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* SVG Rendering Details */
+.signage-svg-container {
+    box-shadow: var(--shadow-lg);
+    border-radius: 4px;
+    background-color: #000;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.signage-svg-container:hover {
+    transform: translateY(-5px);
+}
+
+/* Printing styles */
+@media print {
+    body, .app-container {
+        height: auto;
+        overflow: visible;
+        background-color: var(--walmart-white);
+        color: #000;
+    }
+    .sidebar,
+    .preview-header,
+    .improvements-bar,
+    .preview-zoom-controls {
+        display: none !important;
+    }
+    .preview-viewport {
+        background-image: none;
+        padding: 0;
+        margin: 0;
+        height: auto;
+        width: 100vw;
+    }
+    .preview-area {
+        overflow: visible;
+        padding: 0;
+        margin: 0;
+        gap: 40px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .signage-svg-container {
+        box-shadow: none;
+        page-break-inside: avoid;
+        margin: 10px;
+    }
+}

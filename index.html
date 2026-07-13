@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walmart Retail Signage Creator & Visualizer</title>
+    <!-- Modern typography via Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- App Styling -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <header class="sidebar-header">
+                <div class="brand">
+                    <div class="spark-logo-mini" id="mini-spark"></div>
+                    <h2>Walmart Signage Studio</h2>
+                </div>
+                <p class="subtitle">Design, Customize & Export Store Signage</p>
+            </header>
+
+            <div class="control-sections">
+                <!-- Size & Layout Presets -->
+                <section class="control-card">
+                    <h3 class="card-title"><i class="fa-solid fa-expand"></i> Dimensions & Layout</h3>
+                    <div class="form-group">
+                        <label for="sign-layout-format">Signage Format Style</label>
+                        <select id="sign-layout-format">
+                            <option value="hanging-banner" selected>Aisle Hanging Banner (Aisle & Space)</option>
+                            <option value="vertical-rack">Vertical Upright Rack Tag (Photo #1)</option>
+                            <option value="shelf-label">Horizontal Shelf Label (Photo #2)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="size-preset">Sign Size Preset</label>
+                        <select id="size-preset">
+                            <option value="2x11" selected>Large (2" x 11")</option>
+                            <option value="1.25x5.25">Small (1.25" x 5.25")</option>
+                            <option value="custom">Custom Dimensions...</option>
+                        </select>
+                    </div>
+
+                    <div id="custom-size-inputs" class="form-row hidden">
+                        <div class="form-group half">
+                            <label for="custom-width">Width (in)</label>
+                            <input type="number" id="custom-width" value="12" min="2" max="100" step="0.5">
+                        </div>
+                        <div class="form-group half">
+                            <label for="custom-height">Height (in)</label>
+                            <input type="number" id="custom-height" value="48" min="2" max="200" step="0.5">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sign-font">Typography Style</label>
+                        <select id="sign-font">
+                            <option value="Outfit" selected>Outfit (Everyday/Bogle Style)</option>
+                            <option value="Montserrat">Montserrat (Bold & Clean)</option>
+                            <option value="Inter">Inter (Classic Corporate)</option>
+                            <option value="sans-serif">System Sans-Serif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="scale-category">Category Font Scale (<span id="scale-category-value">100%</span>)</label>
+                        <input type="range" id="scale-category" min="50" max="200" value="100" step="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="scale-badge">Badge Scale (<span id="scale-badge-value">100%</span>)</label>
+                        <input type="range" id="scale-badge" min="50" max="200" value="100" step="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="scale-aisle">Aisle Text Scale (<span id="scale-aisle-value">100%</span>)</label>
+                        <input type="range" id="scale-aisle" min="50" max="400" value="100" step="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="scale-space">Space Text Scale (<span id="scale-space-value">100%</span>)</label>
+                        <input type="range" id="scale-space" min="50" max="400" value="100" step="5">
+                    </div>
+                </section>
+
+                <!-- Text Customization -->
+                <section class="control-card">
+                    <h3 class="card-title"><i class="fa-solid fa-font"></i> Content & Typography</h3>
+                    
+                    <div class="form-group">
+                        <label for="text-category">Category / Zone Label</label>
+                        <input type="text" id="text-category" value="ACTION ALLEY" placeholder="e.g. ACTION ALLEY">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="text-badge">Badge Text (Oval initials)</label>
+                        <input type="text" id="text-badge" value="BK" placeholder="e.g. BK" maxlength="4">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group two-thirds">
+                            <label for="text-aisle-label">Aisle Prefix</label>
+                            <input type="text" id="text-aisle-label" value="AISLE">
+                        </div>
+                        <div class="form-group one-third">
+                            <label for="text-aisle-value">Aisle #</label>
+                            <input type="text" id="text-aisle-value" value="1" placeholder="e.g. 1">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group two-thirds">
+                            <label for="text-space-label">Space Prefix</label>
+                            <input type="text" id="text-space-label" value="SPACE">
+                        </div>
+                        <div class="form-group one-third">
+                            <label for="text-space-values">Space # (List)</label>
+                            <input type="text" id="text-space-values" value="1,2,3,4,5" placeholder="e.g. 1,2,3">
+                        </div>
+                    </div>
+                    <small class="help-text">Use commas to create multiple signs side-by-side (e.g. 1,2,3,4,5)</small>
+                </section>
+
+                <!-- Style & Brand Elements -->
+                <section class="control-card">
+                    <h3 class="card-title"><i class="fa-solid fa-palette"></i> Styling & Branding</h3>
+                    
+                    <div class="form-group">
+                        <label for="color-theme">Color Theme</label>
+                        <select id="color-theme">
+                            <option value="walmart-classic" selected>Walmart Classic Blue & Yellow</option>
+                            <option value="walmart-highcontrast">High Contrast (Yellow Background)</option>
+                            <option value="walmart-dark">Sleek Dark Mode (Charcoal & Yellow)</option>
+                            <option value="custom">Custom Color Theme...</option>
+                        </select>
+                    </div>
+
+                    <div id="custom-color-inputs" class="form-row hidden">
+                        <div class="form-group third">
+                            <label for="color-bg">Background</label>
+                            <input type="color" id="color-bg" value="#0071CE">
+                        </div>
+                        <div class="form-group third">
+                            <label for="color-accent">Accent/Yellow</label>
+                            <input type="color" id="color-accent" value="#FFC220">
+                        </div>
+                        <div class="form-group third">
+                            <label for="color-text">Text/Details</label>
+                            <input type="color" id="color-text" value="#FFFFFF">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="decal-spark">Walmart Spark Decal</label>
+                        <select id="decal-spark">
+                            <option value="none">None</option>
+                            <option value="top-header" selected>Header Center (Between border & text)</option>
+                            <option value="watermark">Subtle Watermark (Large background)</option>
+                            <option value="watermark-pattern">Tiled Spark Pattern (Background fill)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="decal-spark-scale">Spark Logo Scale (<span id="spark-scale-value">100%</span>)</label>
+                        <input type="range" id="decal-spark-scale" min="50" max="200" value="100" step="5">
+                    </div>
+
+                    <div id="watermark-opacity-group" class="form-group hidden">
+                        <label for="watermark-opacity">Watermark Opacity (<span id="watermark-opacity-value">6%</span>)</label>
+                        <input type="range" id="watermark-opacity" min="2" max="60" value="6" step="2">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="toggle-barcode" checked>
+                            Show Location Sticker Template
+                        </label>
+                    </div>
+
+                    <div id="barcode-text-group" class="form-group">
+                        <label for="text-barcode-label">Sticker Label Text</label>
+                        <input type="text" id="text-barcode-label" value="place feature location label here">
+                    </div>
+                </section>
+            </div>
+
+            <!-- Export Actions -->
+            <footer class="sidebar-actions">
+                <button id="btn-export-svg" class="btn btn-primary">
+                    <i class="fa-solid fa-download"></i> Download Vector SVGs
+                </button>
+                <button id="btn-print" class="btn btn-secondary">
+                    <i class="fa-solid fa-print"></i> Print Signage Sheet
+                </button>
+                <button id="btn-copy-code" class="btn btn-tertiary">
+                    <i class="fa-solid fa-code"></i> Copy SVG Markup
+                </button>
+            </footer>
+        </aside>
+
+        <!-- Main Live Preview Viewport -->
+        <main class="preview-viewport">
+            <header class="preview-header">
+                <div class="preview-title-bar">
+                    <h1>Signage Live Preview</h1>
+                    <span class="badge" id="size-dimensions-display">12.00" x 48.00" (Aisle Sign)</span>
+                </div>
+                <div class="preview-zoom-controls">
+                    <i class="fa-solid fa-magnifying-glass-minus"></i>
+                    <input type="range" id="zoom-range" min="0" max="100" value="50">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    <span id="zoom-value">50%</span>
+                </div>
+            </header>
+
+            <div class="preview-area" id="preview-area">
+                <!-- SVG Signs will be rendered here dynamically -->
+                <div class="loading-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading Sign Engine...
+                </div>
+            </div>
+
+            <!-- Suggestion / Improvements Callout -->
+            <section class="improvements-bar">
+                <div class="info-card">
+                    <h4><i class="fa-solid fa-wand-magic-sparkles"></i> Antigravity Design Notes</h4>
+                    <p id="design-notes-text">
+                        <strong>Improvements Added:</strong> Official Walmart blue (#0071CE) and spark yellow (#FFC220) colors are applied. 
+                        We've upgraded typography to Google Outfit (which mirrors the new "Everyday Sans" brand font) and improved spacing, line weights, and logo alignment.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Inject Walmart Spark scripts and app scripts -->
+    <script src="logo-spark.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
