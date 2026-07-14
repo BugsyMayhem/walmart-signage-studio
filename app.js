@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         decalSpark: "top-header",
         decalSparkScale: 100,
         watermarkOpacity: 6,
+        toggleCategory: true,
         toggleBarcode: true,
         textBarcodeLabel: "",
         scaleCategory: 100,
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         colorAccent: document.getElementById("color-accent"),
         colorText: document.getElementById("color-text"),
         decalSpark: document.getElementById("decal-spark"),
+        toggleCategory: document.getElementById("toggle-category"),
         toggleBarcode: document.getElementById("toggle-barcode"),
         barcodeTextGroup: document.getElementById("barcode-text-group"),
         textBarcodeLabel: document.getElementById("text-barcode-label"),
@@ -110,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         el.colorAccent.value = state.accentColor;
         el.colorText.value = state.textColor;
         el.decalSpark.value = state.decalSpark;
+        el.toggleCategory.checked = state.toggleCategory;
         el.toggleBarcode.checked = state.toggleBarcode;
         el.textBarcodeLabel.value = state.textBarcodeLabel;
         el.zoomRange.value = state.zoomPercent;
@@ -165,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         state.fontStyle = el.signFont.value;
+        state.toggleCategory = el.toggleCategory.checked;
         state.textCategory = el.textCategory.value.trim().toUpperCase();
         state.textBadge = el.textBadge.value.trim().toUpperCase();
         state.textAisleLabel = el.textAisleLabel.value.trim().toUpperCase();
@@ -566,12 +570,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const dividerWidth = w * 0.72;
         const dividerX = w / 2 - dividerWidth / 2;
 
-        // Circular or Oval Badge Pill positioning: centered dynamically to prevent text overlap
-        const catTextBottom = catTextY + catFontSize * 0.5;
-        const badgeY = (catTextBottom + divider1Y) / 2;
-        let badgeHtml = "";
-        const badgeTextLen = state.textBadge.length;
-
         // Custom styling for theme text/fill colors
         const signBg = state.bgColor;
         const accent = state.accentColor;
@@ -586,6 +584,20 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (state.colorTheme === "walmart-rollback") {
             dividerClr = "#FCA5A5";
         }
+
+        // Circular or Oval Badge Pill positioning: centered dynamically to prevent text overlap
+        let badgeY = 0;
+        let categoryTextHtml = "";
+        if (state.toggleCategory) {
+            const catTextBottom = catTextY + catFontSize * 0.5;
+            badgeY = (catTextBottom + divider1Y) / 2;
+            categoryTextHtml = `<text x="${w / 2}" y="${catTextY}" fill="${accent}" class="sign-text text-extra-bold" font-size="${catFontSize}" letter-spacing="0.05em" dy="0.35em">${categoryVal}</text>`;
+        } else {
+            // Centered between top bar and first divider
+            badgeY = (topBarHeight + divider1Y) / 2;
+        }
+        let badgeHtml = "";
+        const badgeTextLen = state.textBadge.length;
         
         if (badgeTextLen <= 2) {
             // Perfect circle for 1 or 2 letters
@@ -715,7 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ${sparkSVGHtml}
     
     <!-- Category / Zone Header -->
-    <text x="${w / 2}" y="${catTextY}" fill="${accent}" class="sign-text text-extra-bold" font-size="${catFontSize}" letter-spacing="0.05em" dy="0.35em">${categoryVal}</text>
+    ${categoryTextHtml}
     
     <!-- Circular/Oval badge initials -->
     ${badgeHtml}
@@ -874,7 +886,7 @@ document.addEventListener("DOMContentLoaded", () => {
         el.textCategory, el.textBadge, el.textAisleLabel, el.textAisleValue,
         el.textSpaceLabel, el.textSpaceValues, el.colorTheme,
         el.colorBg, el.colorAccent, el.colorText, el.decalSpark,
-        el.toggleBarcode, el.textBarcodeLabel,
+        el.toggleCategory, el.toggleBarcode, el.textBarcodeLabel,
         el.scaleCategory, el.scaleBadge, el.scaleAisle, el.scaleSpace,
         el.decalSparkScale, el.watermarkOpacity, el.signLayoutFormat
     ];

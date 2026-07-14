@@ -1,6 +1,7 @@
 import os
 import json
 import urllib.request
+import re
 
 def merge_and_deploy():
     project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,11 +20,11 @@ def merge_and_deploy():
         app_js = f.read()
         
     # Merge styles
-    html = html.replace('<link rel="stylesheet" href="index.css">', f"<style>\n{css}\n</style>")
+    html = re.sub(r'<link rel="stylesheet" href="index\.css(?:\?v=[a-zA-Z0-9.]+)?">', lambda m: f"<style>\n{css}\n</style>", html)
     
     # Merge scripts
-    html = html.replace('<script src="logo-spark.js"></script>', f"<script>\n{spark_js}\n</script>")
-    html = html.replace('<script src="app.js"></script>', f"<script>\n{app_js}\n</script>")
+    html = re.sub(r'<script src="logo-spark\.js(?:\?v=[a-zA-Z0-9.]+)?"></script>', lambda m: f"<script>\n{spark_js}\n</script>", html)
+    html = re.sub(r'<script src="app\.js(?:\?v=[a-zA-Z0-9.]+)?"></script>', lambda m: f"<script>\n{app_js}\n</script>", html)
     
     # Ensure dist folder exists
     dist_dir = os.path.join(project_dir, "dist")
