@@ -1508,13 +1508,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // Circular or Oval Badge Pill positioning: centered dynamically to prevent text overlap
         let badgeY = 0;
         let categoryTextHtml = "";
-        if (state.toggleCategory) {
+        const hasCategoryText = categoryVal.trim().length > 0;
+
+        if (state.toggleCategory && hasCategoryText) {
             const catTextBottom = catTextY + catFontSize * 0.5;
             badgeY = (catTextBottom + divider1Y) / 2;
             categoryTextHtml = `<text x="${w / 2}" y="${catTextY}" fill="${accent}" class="sign-text text-extra-bold" font-size="${catFontSize}" letter-spacing="0.05em" dy="0.35em">${categoryVal}</text>`;
         } else {
-            // Centered between top bar and first divider
-            badgeY = (topBarHeight + divider1Y) / 2;
+            // Center the badge between the top boundary (spark bottom or top accent bar) and first divider
+            let topBoundary = topBarHeight;
+            if (state.decalSpark === "top-header" && window.WalmartSpark) {
+                const sparkSize = w * 0.12 * sparkScale;
+                topBoundary = h * 0.075 + sparkSize / 2;
+            }
+            badgeY = (topBoundary + divider1Y) / 2;
         }
         let badgeHtml = "";
         const badgeTextLen = state.textBadge.length;
