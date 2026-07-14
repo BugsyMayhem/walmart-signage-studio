@@ -109,17 +109,63 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group two-thirds">
-                            <label for="text-space-label">Space Prefix</label>
-                            <input type="text" id="text-space-label" value="SPACE">
-                        </div>
-                        <div class="form-group one-third">
-                            <label for="text-space-values">Space # (List)</label>
-                            <input type="text" id="text-space-values" value="1,2,3,4,5" placeholder="e.g. 1,2,3">
-                        </div>
+                    <div class="form-group">
+                        <label for="input-mode">Sign Creation Mode</label>
+                        <select id="input-mode">
+                            <option value="standard" selected>Standard (Comma List)</option>
+                            <option value="range">Range Generator (Batch)</option>
+                            <option value="csv">CSV Spreadsheet Upload</option>
+                        </select>
                     </div>
-                    <small class="help-text">Use commas to create multiple signs side-by-side (e.g. 1,2,3,4,5)</small>
+
+                    <!-- Standard Input Group -->
+                    <div id="input-group-standard">
+                        <div class="form-row">
+                            <div class="form-group two-thirds">
+                                <label for="text-space-label">Space Prefix</label>
+                                <input type="text" id="text-space-label" value="SPACE">
+                            </div>
+                            <div class="form-group one-third">
+                                <label for="text-space-values">Space # (List)</label>
+                                <input type="text" id="text-space-values" value="1,2,3,4,5" placeholder="e.g. 1,2,3">
+                            </div>
+                        </div>
+                        <small class="help-text">Use commas to create multiple signs side-by-side (e.g. 1,2,3,4,5)</small>
+                    </div>
+
+                    <!-- Range Generator Group -->
+                    <div id="input-group-range" class="hidden">
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="range-aisle-start">Aisle From</label>
+                                <input type="number" id="range-aisle-start" value="1" min="1" max="999">
+                            </div>
+                            <div class="form-group half">
+                                <label for="range-aisle-end">Aisle To</label>
+                                <input type="number" id="range-aisle-end" value="2" min="1" max="999">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="range-space-start">Space From</label>
+                                <input type="number" id="range-space-start" value="1" min="1" max="99">
+                            </div>
+                            <div class="form-group half">
+                                <label for="range-space-end">Space To</label>
+                                <input type="number" id="range-space-end" value="3" min="1" max="99">
+                            </div>
+                        </div>
+                        <small class="help-text">Generates all combinations (e.g., Aisle 1 Spaces 1-3, Aisle 2 Spaces 1-3)</small>
+                    </div>
+
+                    <!-- CSV Import Group -->
+                    <div id="input-group-csv" class="hidden">
+                        <div class="form-group">
+                            <label for="csv-file-input">Choose CSV File</label>
+                            <input type="file" id="csv-file-input" accept=".csv" class="file-input">
+                        </div>
+                        <small class="help-text">CSV Headers required: <code>Aisle, Space, Category, Barcode</code></small>
+                    </div>
                 </section>
 
                 <!-- Style & Brand Elements -->
@@ -130,6 +176,9 @@
                         <label for="color-theme">Color Theme</label>
                         <select id="color-theme">
                             <option value="walmart-classic" selected>Walmart Classic Blue & Yellow</option>
+                            <option value="walmart-garden">Garden Center Green</option>
+                            <option value="walmart-pharmacy">Pharmacy Teal</option>
+                            <option value="walmart-rollback">Clearance & Rollback Red</option>
                             <option value="walmart-highcontrast">High Contrast (Yellow Background)</option>
                             <option value="walmart-dark">Sleek Dark Mode (Charcoal & Yellow)</option>
                             <option value="custom">Custom Color Theme...</option>
@@ -179,8 +228,8 @@
                     </div>
 
                     <div id="barcode-text-group" class="form-group">
-                        <label for="text-barcode-label">Sticker Label Text</label>
-                        <input type="text" id="text-barcode-label" value="place feature location label here">
+                        <label for="text-barcode-label">Barcode Location</label>
+                        <input type="text" id="text-barcode-label" value="" placeholder="e.g. 000000045971">
                     </div>
                 </section>
             </div>
@@ -205,6 +254,7 @@
                 <div class="preview-title-bar">
                     <h1>Signage Live Preview</h1>
                     <span class="badge" id="size-dimensions-display">12.00" x 48.00" (Aisle Sign)</span>
+                    <span class="badge badge-count" id="sign-count-display" style="display:none;"></span>
                 </div>
                 <div class="preview-zoom-controls">
                     <i class="fa-solid fa-magnifying-glass-minus"></i>

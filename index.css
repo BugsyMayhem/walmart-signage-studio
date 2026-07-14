@@ -377,6 +377,14 @@ input[type="color"]::-webkit-color-swatch {
     color: var(--text-secondary);
 }
 
+.preview-title-bar .badge-count {
+    background-color: rgba(255, 194, 32, 0.15);
+    border-color: var(--walmart-yellow);
+    color: var(--walmart-yellow);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
 .preview-zoom-controls {
     display: flex;
     align-items: center;
@@ -400,12 +408,37 @@ input[type="color"]::-webkit-color-swatch {
 /* Active Preview Area where SVGs reside */
 .preview-area {
     flex-grow: 1;
-    overflow: auto;
-    padding: 60px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 40px 40px 60px;
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
     justify-content: center;
-    gap: 30px;
+    gap: 24px;
+}
+
+/* When there's only one sign, keep it fully centered vertically too */
+.preview-area:has(.signage-svg-container:only-child) {
+    align-content: center;
+    align-items: center;
+}
+
+/* Scrollbar styling for the preview area */
+.preview-area::-webkit-scrollbar {
+    width: 8px;
+}
+.preview-area::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+}
+.preview-area::-webkit-scrollbar-thumb {
+    background: rgba(255,194,32,0.35);
+    border-radius: 4px;
+}
+.preview-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,194,32,0.6);
 }
 
 .loading-state {
@@ -462,40 +495,93 @@ input[type="color"]::-webkit-color-swatch {
     transform: translateY(-5px);
 }
 
-/* Printing styles */
+/* ═══════════════════════════════════════════════════════════════
+   PRINT STYLES — Signs print at actual size, no splitting, no overflow
+   ═══════════════════════════════════════════════════════════════ */
 @media print {
-    body, .app-container {
-        height: auto;
-        overflow: visible;
-        background-color: var(--walmart-white);
-        color: #000;
+    /* Reset page to borderless */
+    @page {
+        margin: 10mm;
+        size: auto;
     }
+
+    /* Make the body fully visible */
+    *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: #fff !important;
+    }
+
+    .app-container {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Hide everything that isn't the preview area */
     .sidebar,
     .preview-header,
     .improvements-bar,
     .preview-zoom-controls {
         display: none !important;
     }
+
+    /* The main viewport becomes a plain block */
     .preview-viewport {
-        background-image: none;
-        padding: 0;
-        margin: 0;
-        height: auto;
-        width: 100vw;
+        background-image: none !important;
+        background-color: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: auto !important;
+        width: 100% !important;
+        display: block !important;
+        overflow: visible !important;
     }
+
+    /* Signs wrap in a row, each one avoids being split across pages */
     .preview-area {
-        overflow: visible;
-        padding: 0;
-        margin: 0;
-        gap: 40px;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 6mm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        width: 100% !important;
+        height: auto !important;
     }
+
+    /* Each sign container: use actual physical dimensions */
     .signage-svg-container {
-        box-shadow: none;
-        page-break-inside: avoid;
-        margin: 10px;
+        width: var(--print-w, 50.8mm) !important;
+        height: var(--print-h, 279.4mm) !important;
+        flex: 0 0 auto !important;
+        box-shadow: none !important;
+        transform: none !important;
+        transition: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        overflow: visible !important;
+    }
+
+    /* Make the SVG fill the physical container */
+    .signage-svg-container svg {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Hide the loading state */
+    .loading-state {
+        display: none !important;
     }
 }
+

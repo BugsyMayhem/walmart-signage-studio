@@ -22,13 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
         decalSparkScale: 100,
         watermarkOpacity: 6,
         toggleBarcode: true,
-        textBarcodeLabel: "place feature location label here",
+        textBarcodeLabel: "",
         scaleCategory: 100,
         scaleBadge: 100,
         scaleAisle: 100,
         scaleSpace: 100,
         signLayoutFormat: "hanging-banner",
-        zoomPercent: 50
+        zoomPercent: 50,
+        inputMode: "standard",
+        rangeAisleStart: 1,
+        rangeAisleEnd: 2,
+        rangeSpaceStart: 1,
+        rangeSpaceEnd: 3,
+        csvData: []
     };
 
     // DOM Elements Cache
@@ -59,6 +65,15 @@ document.addEventListener("DOMContentLoaded", () => {
         previewArea: document.getElementById("preview-area"),
         zoomRange: document.getElementById("zoom-range"),
         zoomValue: document.getElementById("zoom-value"),
+        inputMode: document.getElementById("input-mode"),
+        inputGroupStandard: document.getElementById("input-group-standard"),
+        inputGroupRange: document.getElementById("input-group-range"),
+        inputGroupCsv: document.getElementById("input-group-csv"),
+        rangeAisleStart: document.getElementById("range-aisle-start"),
+        rangeAisleEnd: document.getElementById("range-aisle-end"),
+        rangeSpaceStart: document.getElementById("range-space-start"),
+        rangeSpaceEnd: document.getElementById("range-space-end"),
+        csvFileInput: document.getElementById("csv-file-input"),
         scaleCategory: document.getElementById("scale-category"),
         scaleCategoryValue: document.getElementById("scale-category-value"),
         scaleBadge: document.getElementById("scale-badge"),
@@ -73,7 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
         watermarkOpacityGroup: document.getElementById("watermark-opacity-group"),
         watermarkOpacity: document.getElementById("watermark-opacity"),
         watermarkOpacityValue: document.getElementById("watermark-opacity-value"),
-        sizeDimensionsDisplay: document.getElementById("size-dimensions-display")
+        sizeDimensionsDisplay: document.getElementById("size-dimensions-display"),
+        signCountDisplay: document.getElementById("sign-count-display")
     };
 
     // Initialize inputs from initial state
@@ -110,6 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
         el.sparkScaleValue.textContent = `${state.decalSparkScale}%`;
         el.watermarkOpacity.value = state.watermarkOpacity;
         el.watermarkOpacityValue.textContent = `${state.watermarkOpacity}%`;
+        el.inputMode.value = state.inputMode;
+        el.rangeAisleStart.value = state.rangeAisleStart;
+        el.rangeAisleEnd.value = state.rangeAisleEnd;
+        el.rangeSpaceStart.value = state.rangeSpaceStart;
+        el.rangeSpaceEnd.value = state.rangeSpaceEnd;
     }
 
     // Sync input changes to state
@@ -150,6 +171,16 @@ document.addEventListener("DOMContentLoaded", () => {
         state.textAisleValue = el.textAisleValue.value.trim().toUpperCase();
         state.textSpaceLabel = el.textSpaceLabel.value.trim().toUpperCase();
         
+        state.inputMode = el.inputMode.value;
+        el.inputGroupStandard.classList.toggle("hidden", state.inputMode !== "standard");
+        el.inputGroupRange.classList.toggle("hidden", state.inputMode !== "range");
+        el.inputGroupCsv.classList.toggle("hidden", state.inputMode !== "csv");
+
+        state.rangeAisleStart = parseInt(el.rangeAisleStart.value) || 1;
+        state.rangeAisleEnd = parseInt(el.rangeAisleEnd.value) || 1;
+        state.rangeSpaceStart = parseInt(el.rangeSpaceStart.value) || 1;
+        state.rangeSpaceEnd = parseInt(el.rangeSpaceEnd.value) || 1;
+
         state.textSpaceValuesRaw = el.textSpaceValues.value;
         // Parse space values: support comma separated or simple range (e.g. 1-5)
         state.textSpaceValues = parseSpaceValues(state.textSpaceValuesRaw);
@@ -165,6 +196,18 @@ document.addEventListener("DOMContentLoaded", () => {
             if (state.colorTheme === "walmart-classic") {
                 state.bgColor = "#0071CE";      // Walmart True Blue
                 state.accentColor = "#FFC220";  // Walmart Spark Yellow
+                state.textColor = "#FFFFFF";    // White
+            } else if (state.colorTheme === "walmart-garden") {
+                state.bgColor = "#006A4E";      // Garden Center Dark Green
+                state.accentColor = "#FFC220";  // Spark Yellow
+                state.textColor = "#FFFFFF";    // White
+            } else if (state.colorTheme === "walmart-pharmacy") {
+                state.bgColor = "#008F91";      // Pharmacy Teal
+                state.accentColor = "#FFC220";  // Spark Yellow
+                state.textColor = "#FFFFFF";    // White
+            } else if (state.colorTheme === "walmart-rollback") {
+                state.bgColor = "#DC2626";      // Rollback/Clearance Red
+                state.accentColor = "#FFC220";  // Spark Yellow
                 state.textColor = "#FFFFFF";    // White
             } else if (state.colorTheme === "walmart-highcontrast") {
                 state.bgColor = "#FFC220";      // Yellow bg
@@ -340,7 +383,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Dynamic SVG Builder Engine
-    function buildSignSVG(spaceValue) {
+    function buildSignSVG(spaceValue, aisleOverride = null, categoryOverride = null, barcodeOverride = null) {
+        const aisleVal = aisleOverride !== null ? aisleOverride : state.textAisleValue;
+        const categoryVal = categoryOverride !== null ? categoryOverride : state.textCategory;
+        const barcodeVal = barcodeOverride !== null ? barcodeOverride : state.textBarcodeLabel;
+
         // Pixel conversion factor: 1 inch = 50 virtual pixels
         const scaleFactor = 50;
         const w = state.widthInches * scaleFactor;
@@ -350,14 +397,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Format: Vertical Upright Rack Tag (Photo #1)
         if (state.signLayoutFormat === "vertical-rack") {
-            const barcodeText = `${state.textAisleValue}-${spaceValue}`;
+            const barcodeText = `${aisleVal}-${spaceValue}`;
             
             // Layout barcode vertically along the left strip (centered and shorter)
             const barcodeW = h * 0.60;
             const barcodeH = Math.max(w * 0.12, 8);
             const barcodeSVG = generateUPCASVG(barcodeText, -barcodeW / 2, -barcodeH / 2, barcodeW, barcodeH).svg;
             
-            const aisleMatch = state.textAisleValue.match(/^([A-Za-z]+)?(\d+)?$/);
+            const aisleMatch = aisleVal.match(/^([A-Za-z]+)?(\d+)?$/);
             const aisleAlpha = aisleMatch ? (aisleMatch[1] || "") : "";
             const aisleNum = aisleMatch ? (aisleMatch[2] || "") : "";
             
@@ -402,17 +449,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Format: Horizontal Shelf Label (Photo #2)
         if (state.signLayoutFormat === "shelf-label") {
-            const barcodeText = `${state.textAisleValue}-${spaceValue}`;
+            const barcodeText = `${aisleVal}-${spaceValue}`;
             
             const barcodeW = w * 0.65;
             const barcodeH = Math.max(h * 0.32, 14); // Thinner bar height
             const barcodeX = w * 0.175;
+            const barcodeY = (h - barcodeH) / 2; // Fixed positioning
             const barcodeSVG = generateUPCASVG(barcodeText, barcodeX, barcodeY, barcodeW, barcodeH).svg;
             
             const now = new Date();
             const dateStr = `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getFullYear()).slice(-2)}`;
             
-            const aisleMatch = state.textAisleValue.match(/^([A-Za-z]+)?(\d+)?$/);
+            const aisleMatch = aisleVal.match(/^([A-Za-z]+)?(\d+)?$/);
             const aisleAlpha = aisleMatch ? (aisleMatch[1] || "") : "";
             const aisleNum = aisleMatch ? (aisleMatch[2] || "") : "";
             
@@ -528,7 +576,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const signBg = state.bgColor;
         const accent = state.accentColor;
         const textClr = state.textColor;
-        const dividerClr = (state.colorTheme === "walmart-classic") ? "#76B2E6" : accent; // Soft blue divider on blue bg
+        let dividerClr = accent;
+        if (state.colorTheme === "walmart-classic") {
+            dividerClr = "#76B2E6";
+        } else if (state.colorTheme === "walmart-garden") {
+            dividerClr = "#4FB08C";
+        } else if (state.colorTheme === "walmart-pharmacy") {
+            dividerClr = "#4FC1C2";
+        } else if (state.colorTheme === "walmart-rollback") {
+            dividerClr = "#FCA5A5";
+        }
         
         if (badgeTextLen <= 2) {
             // Perfect circle for 1 or 2 letters
@@ -558,13 +615,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const stickerY = h * 0.865;
 
             // Check if user has entered custom text or left it as default/empty
-            const isDefaultOrEmpty = !state.textBarcodeLabel || 
-                                     state.textBarcodeLabel.trim() === "" || 
-                                     state.textBarcodeLabel.toLowerCase() === "place feature location label here";
+            const isDefaultOrEmpty = !barcodeVal || 
+                                     barcodeVal.trim() === "" || 
+                                     barcodeVal.toLowerCase() === "place feature location label here";
 
             if (isDefaultOrEmpty) {
                 // Official Walmart location label format (matches photo #2)
-                const barcodeText = `${state.textAisleValue}-${spaceValue}`;
+                const barcodeText = `${aisleVal}-${spaceValue}`;
                 
                 const barcodeW = stickerW * 0.85;
                 const barcodeH = stickerH * 0.32;
@@ -578,7 +635,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const dateStr = `${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getFullYear()).slice(-2)}`;
 
                 // Parse Aisle alphanumeric code to stack them (e.g. "A" on top of "1")
-                const aisleMatch = state.textAisleValue.match(/^([A-Za-z]+)?(\d+)?$/);
+                const aisleMatch = aisleVal.match(/^([A-Za-z]+)?(\d+)?$/);
                 const aisleAlpha = aisleMatch ? (aisleMatch[1] || "") : "";
                 const aisleNum = aisleMatch ? (aisleMatch[2] || "") : "";
 
@@ -608,7 +665,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const barcodeX = stickerX + (stickerW - barcodeW) / 2;
                 const barcodeY = stickerY + stickerH * 0.16;
 
-                const barcodeData = generateUPCASVG(state.textBarcodeLabel, barcodeX, barcodeY, barcodeW, barcodeH);
+                const barcodeData = generateUPCASVG(barcodeVal, barcodeX, barcodeY, barcodeW, barcodeH);
                 const barcodeSVG = barcodeData.svg;
                 const upcText = barcodeData.humanReadable;
 
@@ -658,7 +715,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ${sparkSVGHtml}
     
     <!-- Category / Zone Header -->
-    <text x="${w / 2}" y="${catTextY}" fill="${accent}" class="sign-text text-extra-bold" font-size="${catFontSize}" letter-spacing="0.05em" dy="0.35em">${state.textCategory}</text>
+    <text x="${w / 2}" y="${catTextY}" fill="${accent}" class="sign-text text-extra-bold" font-size="${catFontSize}" letter-spacing="0.05em" dy="0.35em">${categoryVal}</text>
     
     <!-- Circular/Oval badge initials -->
     ${badgeHtml}
@@ -670,7 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <text x="${w / 2}" y="${aisleLabelY}" fill="${accent}" class="sign-text text-extra-bold" font-size="${labelFontSize}" letter-spacing="0.06em" dy="0.35em">${state.textAisleLabel}</text>
     
     <!-- AISLE Value -->
-    <text x="${w / 2}" y="${aisleValueY}" fill="${textClr}" class="sign-text text-extra-bold" font-size="${valueFontSize}" dy="0.35em">${state.textAisleValue}</text>
+    <text x="${w / 2}" y="${aisleValueY}" fill="${textClr}" class="sign-text text-extra-bold" font-size="${valueFontSize}" dy="0.35em">${aisleVal}</text>
     
     <!-- Divider 2 -->
     <line x1="${dividerX}" y1="${divider2Y}" x2="${dividerX + dividerWidth}" y2="${divider2Y}" stroke="${dividerClr}" stroke-width="${dividerStroke}" opacity="0.65" />
@@ -688,47 +745,94 @@ document.addEventListener("DOMContentLoaded", () => {
         return svgContent.trim();
     }
 
-    // Main Render Function
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // getSignConfigs: builds the array of sign config objects based on inputMode
+    // ─────────────────────────────────────────────────────────────────────────
+    function getSignConfigs() {
+        const baseMultiplier = 1440 / state.heightInches;
+        const viewWidth  = state.widthInches  * baseMultiplier * (state.zoomPercent / 100);
+        const viewHeight = state.heightInches * baseMultiplier * (state.zoomPercent / 100);
+
+        if (state.inputMode === "range") {
+            const configs = [];
+            const aisleStart = state.rangeAisleStart;
+            const aisleEnd   = Math.min(state.rangeAisleEnd, aisleStart + 9); // cap at 10 aisles
+            const spaceStart = state.rangeSpaceStart;
+            const spaceEnd   = Math.min(state.rangeSpaceEnd, spaceStart + 29); // cap at 30 spaces
+            for (let a = aisleStart; a <= aisleEnd; a++) {
+                for (let s = spaceStart; s <= spaceEnd; s++) {
+                    configs.push({ spaceValue: String(s), aisleOverride: String(a), viewWidth, viewHeight });
+                }
+            }
+            return configs;
+        }
+
+        if (state.inputMode === "csv") {
+            if (!state.csvData || state.csvData.length === 0) return [];
+            return state.csvData.map(row => ({
+                spaceValue:    row.space    || "",
+                aisleOverride: row.aisle    || state.textAisleValue,
+                categoryOverride: row.category || null,
+                barcodeOverride:  row.barcode  || null,
+                viewWidth,
+                viewHeight
+            })).filter(c => c.spaceValue.length > 0);
+        }
+
+        // Standard mode — comma-separated space values
+        return state.textSpaceValues.map(sv => ({ spaceValue: sv, viewWidth, viewHeight }));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // render: rebuilds the preview area
+    // ─────────────────────────────────────────────────────────────────────────
     function render() {
         updateState();
-
-        // Clear preview area
         el.previewArea.innerHTML = "";
+        const configs = getSignConfigs();
 
-        if (state.textSpaceValues.length === 0) {
+        // Update sign count badge
+        if (configs.length > 1) {
+            el.signCountDisplay.textContent = `${configs.length} Signs`;
+            el.signCountDisplay.style.display = "";
+        } else {
+            el.signCountDisplay.style.display = "none";
+        }
+
+        if (configs.length === 0) {
             el.previewArea.innerHTML = `<div class="loading-state"><i class="fa-solid fa-triangle-exclamation"></i> Please input space numbers.</div>`;
             return;
         }
 
-        // Render each space sign in a separate container
-        state.textSpaceValues.forEach(spaceValue => {
+        configs.forEach(config => {
             const container = document.createElement("div");
             container.className = "signage-svg-container";
-            
-            // Set container visual dimensions. Dynamically compute multiplier to make sign fill container height (~720px max at 50% zoom)
-            const baseMultiplier = 1440 / state.heightInches;
-            const viewWidth = state.widthInches * baseMultiplier * (state.zoomPercent / 100);
-            const viewHeight = state.heightInches * baseMultiplier * (state.zoomPercent / 100);
-            
-            container.style.width = `${viewWidth}px`;
-            container.style.height = `${viewHeight}px`;
-
-            // Build SVG and set innerHTML
-            const svgMarkup = buildSignSVG(spaceValue);
-            container.innerHTML = svgMarkup;
+            container.style.width = `${config.viewWidth}px`;
+            container.style.height = `${config.viewHeight}px`;
+            // Store physical dimensions for print CSS (1 inch = 25.4mm)
+            const printW = (state.widthInches * 25.4).toFixed(1);
+            const printH = (state.heightInches * 25.4).toFixed(1);
+            container.style.setProperty("--print-w", `${printW}mm`);
+            container.style.setProperty("--print-h", `${printH}mm`);
+            container.innerHTML = buildSignSVG(
+                config.spaceValue,
+                config.aisleOverride    !== undefined ? config.aisleOverride    : null,
+                config.categoryOverride !== undefined ? config.categoryOverride : null,
+                config.barcodeOverride  !== undefined ? config.barcodeOverride  : null
+            );
             el.previewArea.appendChild(container);
         });
     }
 
     // Export SVGs Trigger
     function exportSVGs() {
-        state.textSpaceValues.forEach(spaceValue => {
-            const svgMarkup = buildSignSVG(spaceValue);
+        getSignConfigs().forEach(config => {
+            const svgMarkup = buildSignSVG(config.spaceValue);
             const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
             const url = URL.createObjectURL(blob);
-            
             const a = document.createElement("a");
-            const fileName = `walmart_sign_aisle_${state.textAisleValue}_space_${spaceValue}_${state.widthInches}x${state.heightInches}.svg`
+            const fileName = `walmart_sign_aisle_${state.textAisleValue}_space_${config.spaceValue}_${state.widthInches}x${state.heightInches}.svg`
                 .toLowerCase()
                 .replace(/\s+/g, "_");
             a.href = url;
@@ -742,13 +846,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Copy SVG Markup to Clipboard
     function copySVGMarkup() {
-        if (state.textSpaceValues.length === 0) return;
-        const firstSpace = state.textSpaceValues[0];
-        const svgMarkup = buildSignSVG(firstSpace);
+        const configs = getSignConfigs();
+        if (configs.length === 0) return;
+        const firstConfig = configs[0];
+        const svgMarkup = buildSignSVG(firstConfig.spaceValue);
 
         navigator.clipboard.writeText(svgMarkup).then(() => {
             const originalText = el.btnCopyCode.innerHTML;
-            el.btnCopyCode.innerHTML = `<i class="fa-solid fa-check"></i> Copied Aisle ${state.textAisleValue} Space ${firstSpace}!`;
+            el.btnCopyCode.innerHTML = `<i class="fa-solid fa-check"></i> Copied Aisle ${state.textAisleValue} Space ${firstConfig.spaceValue}!`;
             el.btnCopyCode.style.borderColor = "var(--accent-success)";
             el.btnCopyCode.style.color = "var(--accent-success)";
             
@@ -799,6 +904,51 @@ document.addEventListener("DOMContentLoaded", () => {
     el.btnExportSvg.addEventListener("click", exportSVGs);
     el.btnPrint.addEventListener("click", () => window.print());
     el.btnCopyCode.addEventListener("click", copySVGMarkup);
+
+    // CSV file upload listener
+    el.csvFileInput.addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const text = evt.target.result || "";
+            const rows = [];
+            // Split by newlines first
+            const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            lines.forEach(line => {
+                // Skip header row if it contains "space" or "aisle" (case-insensitive)
+                if (/^(space|aisle|category|barcode)/i.test(line)) return;
+                const cols = line.split(",").map(c => c.trim());
+                // Support formats: "space" only, or "aisle,space", or "aisle,space,category,barcode"
+                if (cols.length === 1) {
+                    rows.push({ space: cols[0], aisle: state.textAisleValue });
+                } else if (cols.length === 2) {
+                    rows.push({ aisle: cols[0], space: cols[1] });
+                } else if (cols.length >= 3) {
+                    rows.push({ aisle: cols[0], space: cols[1], category: cols[2] || null, barcode: cols[3] || null });
+                }
+            });
+
+            state.csvData = rows;
+
+            if (rows.length === 0) {
+                el.previewArea.innerHTML = `<div class="loading-state"><i class="fa-solid fa-triangle-exclamation"></i> CSV appears empty or unreadable. Expected columns: Space or Aisle, Space.</div>`;
+                return;
+            }
+            render();
+        };
+        reader.onerror = function() {
+            el.previewArea.innerHTML = `<div class="loading-state"><i class="fa-solid fa-triangle-exclamation"></i> Error reading CSV file.</div>`;
+        };
+        reader.readAsText(file);
+    });
+
+    // Also listen for input mode changes to re-trigger render
+    el.inputMode.addEventListener("change", render);
+    el.rangeAisleStart.addEventListener("input", render);
+    el.rangeAisleEnd.addEventListener("input", render);
+    el.rangeSpaceStart.addEventListener("input", render);
+    el.rangeSpaceEnd.addEventListener("input", render);
 
     // Run initialization
     initInputs();

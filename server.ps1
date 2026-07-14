@@ -1,6 +1,6 @@
 # Simple PowerShell Static File Web Server for Windows
 $port = 8000
-$root = "C:\Users\zacha\.gemini\antigravity-ide\scratch\walmart-signage-creator"
+$root = $PSScriptRoot
 
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")

@@ -3,7 +3,7 @@ import json
 import urllib.request
 
 def merge_and_deploy():
-    project_dir = r"C:\Users\zacha\.gemini\antigravity-ide\scratch\walmart-signage-creator"
+    project_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Read files
     with open(os.path.join(project_dir, "index.html"), "r", encoding="utf-8") as f:
