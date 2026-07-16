@@ -565,7 +565,7 @@ input[type="color"]::-webkit-color-swatch {
         flex-wrap: wrap !important;
         align-items: flex-start !important;
         justify-content: flex-start !important;
-        gap: 6mm !important;
+        gap: 4mm !important;
         padding: 0 !important;
         margin: 0 !important;
         overflow: visible !important;
@@ -619,18 +619,17 @@ input[type="color"]::-webkit-color-swatch {
                 <section class="control-card">
                     <h3 class="card-title"><i class="fa-solid fa-expand"></i> Dimensions & Layout</h3>
                     <div class="form-group">
-                        <label for="sign-layout-format">Signage Format Style</label>
+                        <label for="sign-layout-format">Preset</label>
                         <select id="sign-layout-format">
-                            <option value="hanging-banner" selected>Aisle Hanging Banner (Aisle & Space)</option>
-                            <option value="vertical-rack">Vertical Upright Rack Tag (Photo #1)</option>
-                            <option value="shelf-label">Horizontal Shelf Label (Photo #2)</option>
+                            <option value="walmart-lg-1" selected>Walmart Lg 1</option>
+                            <option value="walmart-sm-1">Walmart Sm 1</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="size-preset">Sign Size Preset</label>
                         <select id="size-preset">
-                            <option value="2x11" selected>Large (2" x 11")</option>
-                            <option value="1.25x5.25">Small (1.25" x 5.25")</option>
+                            <option value="2x10.5" selected>Large (2" x 10.5")</option>
+                            <option value="1.25x5">Small (1.25" x 5")</option>
                             <option value="custom">Custom Dimensions...</option>
                         </select>
                     </div>
@@ -660,16 +659,16 @@ input[type="color"]::-webkit-color-swatch {
                         <input type="range" id="scale-category" min="50" max="200" value="100" step="5">
                     </div>
                     <div class="form-group">
-                        <label for="scale-badge">Badge Scale (<span id="scale-badge-value">100%</span>)</label>
-                        <input type="range" id="scale-badge" min="50" max="200" value="100" step="5">
+                        <label for="scale-badge">Badge Scale (<span id="scale-badge-value">195%</span>)</label>
+                        <input type="range" id="scale-badge" min="50" max="200" value="195" step="5">
                     </div>
                     <div class="form-group">
-                        <label for="scale-aisle">Aisle Text Scale (<span id="scale-aisle-value">100%</span>)</label>
-                        <input type="range" id="scale-aisle" min="50" max="400" value="100" step="5">
+                        <label for="scale-aisle">Aisle Text Scale (<span id="scale-aisle-value">375%</span>)</label>
+                        <input type="range" id="scale-aisle" min="50" max="400" value="375" step="5">
                     </div>
                     <div class="form-group">
-                        <label for="scale-space">Space Text Scale (<span id="scale-space-value">100%</span>)</label>
-                        <input type="range" id="scale-space" min="50" max="400" value="100" step="5">
+                        <label for="scale-space">Space Text Scale (<span id="scale-space-value">375%</span>)</label>
+                        <input type="range" id="scale-space" min="50" max="400" value="375" step="5">
                     </div>
                 </section>
 
@@ -681,7 +680,7 @@ input[type="color"]::-webkit-color-swatch {
                         <label for="text-category">Category / Zone Label</label>
                         <input type="text" id="text-category" value="ACTION ALLEY" placeholder="e.g. ACTION ALLEY">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="toggle-category" checked>
+                            <input type="checkbox" id="toggle-category">
                             Show Category / Zone Label
                         </label>
                     </div>
@@ -804,8 +803,8 @@ input[type="color"]::-webkit-color-swatch {
                     </div>
 
                     <div class="form-group">
-                        <label for="decal-spark-scale">Spark Logo Scale (<span id="spark-scale-value">100%</span>)</label>
-                        <input type="range" id="decal-spark-scale" min="50" max="200" value="100" step="5">
+                        <label for="decal-spark-scale">Spark Logo Scale (<span id="spark-scale-value">200%</span>)</label>
+                        <input type="range" id="decal-spark-scale" min="50" max="200" value="200" step="5">
                     </div>
 
                     <div id="watermark-opacity-group" class="form-group hidden">
@@ -815,7 +814,7 @@ input[type="color"]::-webkit-color-swatch {
 
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="toggle-barcode" checked>
+                            <input type="checkbox" id="toggle-barcode">
                             Show Location Sticker Template
                         </label>
                     </div>
@@ -923,9 +922,9 @@ if (typeof module !== "undefined" && module.exports) {
 document.addEventListener("DOMContentLoaded", () => {
     // State management
     const state = {
-        sizePreset: "2x11",
+        sizePreset: "2x10.5",
         widthInches: 2,
-        heightInches: 11,
+        heightInches: 10.5,
         fontStyle: "Outfit",
         textCategory: "ACTION ALLEY",
         textBadge: "BK",
@@ -939,16 +938,16 @@ document.addEventListener("DOMContentLoaded", () => {
         accentColor: "#FFC220",   // Official Walmart Spark Yellow
         textColor: "#FFFFFF",     // White
         decalSpark: "top-header",
-        decalSparkScale: 100,
+        decalSparkScale: 200,
         watermarkOpacity: 6,
-        toggleCategory: true,
-        toggleBarcode: true,
+        toggleCategory: false,
+        toggleBarcode: false,
         textBarcodeLabel: "",
         scaleCategory: 100,
-        scaleBadge: 100,
-        scaleAisle: 100,
-        scaleSpace: 100,
-        signLayoutFormat: "hanging-banner",
+        scaleBadge: 195,
+        scaleAisle: 375,
+        scaleSpace: 375,
+        signLayoutFormat: "walmart-lg-1",
         zoomPercent: 50,
         inputMode: "standard",
         rangeAisleStart: 1,
@@ -1178,6 +1177,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update header dimension displays
         el.sizeDimensionsDisplay.textContent = `${state.widthInches.toFixed(2)}" x ${state.heightInches.toFixed(2)}" (${state.sizePreset === 'custom' ? 'Custom' : 'Preset'})`;
+        updatePrintStyles();
+    }
+
+    // Dynamic print styles based on preset
+    function updatePrintStyles() {
+        let printStyleEl = document.getElementById("dynamic-print-style");
+        if (!printStyleEl) {
+            printStyleEl = document.createElement("style");
+            printStyleEl.id = "dynamic-print-style";
+            document.head.appendChild(printStyleEl);
+        }
+
+        if (state.sizePreset === "2x10.5" || state.sizePreset === "1.25x5") {
+            printStyleEl.innerHTML = `
+                @media print {
+                    @page {
+                        margin-top: 0.25in;
+                        margin-right: 0.25in;
+                        margin-left: 0.25in;
+                        margin-bottom: 0.25in;
+                    }
+                }
+            `;
+        } else {
+            printStyleEl.innerHTML = `
+                @media print {
+                    @page {
+                        margin: 10mm;
+                    }
+                }
+            `;
+        }
     }
 
     // Helper to parse comma separated values or ranges
@@ -1806,6 +1837,42 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Failed to copy to clipboard.");
         });
     }
+
+    // Setup preset selection handler
+    el.signLayoutFormat.addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (val === "walmart-lg-1") {
+            el.sizePreset.value = "2x10.5";
+            el.scaleCategory.value = 100;
+            el.scaleBadge.value = 195;
+            el.scaleAisle.value = 375;
+            el.scaleSpace.value = 375;
+            el.decalSparkScale.value = 200;
+            el.toggleCategory.checked = false;
+            el.toggleBarcode.checked = false;
+            
+            el.scaleCategoryValue.textContent = "100%";
+            el.scaleBadgeValue.textContent = "195%";
+            el.scaleAisleValue.textContent = "375%";
+            el.scaleSpaceValue.textContent = "375%";
+            el.sparkScaleValue.textContent = "200%";
+        } else if (val === "walmart-sm-1") {
+            el.sizePreset.value = "1.25x5";
+            el.scaleCategory.value = 100;
+            el.scaleBadge.value = 165;
+            el.scaleAisle.value = 315;
+            el.scaleSpace.value = 315;
+            el.decalSparkScale.value = 125;
+            el.toggleCategory.checked = false;
+            el.toggleBarcode.checked = false;
+            
+            el.scaleCategoryValue.textContent = "100%";
+            el.scaleBadgeValue.textContent = "165%";
+            el.scaleAisleValue.textContent = "315%";
+            el.scaleSpaceValue.textContent = "315%";
+            el.sparkScaleValue.textContent = "125%";
+        }
+    });
 
     // Setup input change event listeners
     const inputsToWatch = [

@@ -30,18 +30,17 @@
                 <section class="control-card">
                     <h3 class="card-title"><i class="fa-solid fa-expand"></i> Dimensions & Layout</h3>
                     <div class="form-group">
-                        <label for="sign-layout-format">Signage Format Style</label>
+                        <label for="sign-layout-format">Preset</label>
                         <select id="sign-layout-format">
-                            <option value="hanging-banner" selected>Aisle Hanging Banner (Aisle & Space)</option>
-                            <option value="vertical-rack">Vertical Upright Rack Tag (Photo #1)</option>
-                            <option value="shelf-label">Horizontal Shelf Label (Photo #2)</option>
+                            <option value="walmart-lg-1" selected>Walmart Lg 1</option>
+                            <option value="walmart-sm-1">Walmart Sm 1</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="size-preset">Sign Size Preset</label>
                         <select id="size-preset">
-                            <option value="2x11" selected>Large (2" x 11")</option>
-                            <option value="1.25x5.25">Small (1.25" x 5.25")</option>
+                            <option value="2x10.5" selected>Large (2" x 10.5")</option>
+                            <option value="1.25x5">Small (1.25" x 5")</option>
                             <option value="custom">Custom Dimensions...</option>
                         </select>
                     </div>
@@ -71,16 +70,16 @@
                         <input type="range" id="scale-category" min="50" max="200" value="100" step="5">
                     </div>
                     <div class="form-group">
-                        <label for="scale-badge">Badge Scale (<span id="scale-badge-value">100%</span>)</label>
-                        <input type="range" id="scale-badge" min="50" max="200" value="100" step="5">
+                        <label for="scale-badge">Badge Scale (<span id="scale-badge-value">195%</span>)</label>
+                        <input type="range" id="scale-badge" min="50" max="200" value="195" step="5">
                     </div>
                     <div class="form-group">
-                        <label for="scale-aisle">Aisle Text Scale (<span id="scale-aisle-value">100%</span>)</label>
-                        <input type="range" id="scale-aisle" min="50" max="400" value="100" step="5">
+                        <label for="scale-aisle">Aisle Text Scale (<span id="scale-aisle-value">375%</span>)</label>
+                        <input type="range" id="scale-aisle" min="50" max="400" value="375" step="5">
                     </div>
                     <div class="form-group">
-                        <label for="scale-space">Space Text Scale (<span id="scale-space-value">100%</span>)</label>
-                        <input type="range" id="scale-space" min="50" max="400" value="100" step="5">
+                        <label for="scale-space">Space Text Scale (<span id="scale-space-value">375%</span>)</label>
+                        <input type="range" id="scale-space" min="50" max="400" value="375" step="5">
                     </div>
                 </section>
 
@@ -92,7 +91,7 @@
                         <label for="text-category">Category / Zone Label</label>
                         <input type="text" id="text-category" value="ACTION ALLEY" placeholder="e.g. ACTION ALLEY">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="toggle-category" checked>
+                            <input type="checkbox" id="toggle-category">
                             Show Category / Zone Label
                         </label>
                     </div>
@@ -215,8 +214,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="decal-spark-scale">Spark Logo Scale (<span id="spark-scale-value">100%</span>)</label>
-                        <input type="range" id="decal-spark-scale" min="50" max="200" value="100" step="5">
+                        <label for="decal-spark-scale">Spark Logo Scale (<span id="spark-scale-value">200%</span>)</label>
+                        <input type="range" id="decal-spark-scale" min="50" max="200" value="200" step="5">
                     </div>
 
                     <div id="watermark-opacity-group" class="form-group hidden">
@@ -226,7 +225,7 @@
 
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="toggle-barcode" checked>
+                            <input type="checkbox" id="toggle-barcode">
                             Show Location Sticker Template
                         </label>
                     </div>

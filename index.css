@@ -551,7 +551,7 @@ input[type="color"]::-webkit-color-swatch {
         flex-wrap: wrap !important;
         align-items: flex-start !important;
         justify-content: flex-start !important;
-        gap: 6mm !important;
+        gap: 4mm !important;
         padding: 0 !important;
         margin: 0 !important;
         overflow: visible !important;

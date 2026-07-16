@@ -3,9 +3,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     // State management
     const state = {
-        sizePreset: "2x11",
+        sizePreset: "2x10.5",
         widthInches: 2,
-        heightInches: 11,
+        heightInches: 10.5,
         fontStyle: "Outfit",
         textCategory: "ACTION ALLEY",
         textBadge: "BK",
@@ -19,16 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
         accentColor: "#FFC220",   // Official Walmart Spark Yellow
         textColor: "#FFFFFF",     // White
         decalSpark: "top-header",
-        decalSparkScale: 100,
+        decalSparkScale: 200,
         watermarkOpacity: 6,
-        toggleCategory: true,
-        toggleBarcode: true,
+        toggleCategory: false,
+        toggleBarcode: false,
         textBarcodeLabel: "",
         scaleCategory: 100,
-        scaleBadge: 100,
-        scaleAisle: 100,
-        scaleSpace: 100,
-        signLayoutFormat: "hanging-banner",
+        scaleBadge: 195,
+        scaleAisle: 375,
+        scaleSpace: 375,
+        signLayoutFormat: "walmart-lg-1",
         zoomPercent: 50,
         inputMode: "standard",
         rangeAisleStart: 1,
@@ -258,6 +258,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update header dimension displays
         el.sizeDimensionsDisplay.textContent = `${state.widthInches.toFixed(2)}" x ${state.heightInches.toFixed(2)}" (${state.sizePreset === 'custom' ? 'Custom' : 'Preset'})`;
+        updatePrintStyles();
+    }
+
+    // Dynamic print styles based on preset
+    function updatePrintStyles() {
+        let printStyleEl = document.getElementById("dynamic-print-style");
+        if (!printStyleEl) {
+            printStyleEl = document.createElement("style");
+            printStyleEl.id = "dynamic-print-style";
+            document.head.appendChild(printStyleEl);
+        }
+
+        if (state.sizePreset === "2x10.5" || state.sizePreset === "1.25x5") {
+            printStyleEl.innerHTML = `
+                @media print {
+                    @page {
+                        margin-top: 0.25in;
+                        margin-right: 0.25in;
+                        margin-left: 0.25in;
+                        margin-bottom: 0.25in;
+                    }
+                }
+            `;
+        } else {
+            printStyleEl.innerHTML = `
+                @media print {
+                    @page {
+                        margin: 10mm;
+                    }
+                }
+            `;
+        }
     }
 
     // Helper to parse comma separated values or ranges
@@ -886,6 +918,42 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Failed to copy to clipboard.");
         });
     }
+
+    // Setup preset selection handler
+    el.signLayoutFormat.addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (val === "walmart-lg-1") {
+            el.sizePreset.value = "2x10.5";
+            el.scaleCategory.value = 100;
+            el.scaleBadge.value = 195;
+            el.scaleAisle.value = 375;
+            el.scaleSpace.value = 375;
+            el.decalSparkScale.value = 200;
+            el.toggleCategory.checked = false;
+            el.toggleBarcode.checked = false;
+            
+            el.scaleCategoryValue.textContent = "100%";
+            el.scaleBadgeValue.textContent = "195%";
+            el.scaleAisleValue.textContent = "375%";
+            el.scaleSpaceValue.textContent = "375%";
+            el.sparkScaleValue.textContent = "200%";
+        } else if (val === "walmart-sm-1") {
+            el.sizePreset.value = "1.25x5";
+            el.scaleCategory.value = 100;
+            el.scaleBadge.value = 165;
+            el.scaleAisle.value = 315;
+            el.scaleSpace.value = 315;
+            el.decalSparkScale.value = 125;
+            el.toggleCategory.checked = false;
+            el.toggleBarcode.checked = false;
+            
+            el.scaleCategoryValue.textContent = "100%";
+            el.scaleBadgeValue.textContent = "165%";
+            el.scaleAisleValue.textContent = "315%";
+            el.scaleSpaceValue.textContent = "315%";
+            el.sparkScaleValue.textContent = "125%";
+        }
+    });
 
     // Setup input change event listeners
     const inputsToWatch = [
