@@ -1,0 +1,56 @@
+/* Official Walmart Everyday Sans Web Fonts */
+
+@font-face {
+    font-family: 'Everyday Sans Web';
+    src: url('EverydaySans-Light-Web.woff') format('woff'),
+         url('https://file.squarespace-cdn.com/content/v2/namespaces/fonts/libraries/691634dce384e148b8cb9633/assets/23b839f5-f02a-4679-a0e0-a36104ad76eb/font.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Everyday Sans Web';
+    src: url('EverydaySans-Regular-Web.woff') format('woff'),
+         url('https://file.squarespace-cdn.com/content/v2/namespaces/fonts/libraries/691634dce384e148b8cb9633/assets/f56fc175-3f0e-4835-a753-ca914d3b154a/font.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Everyday Sans Web';
+    src: url('EverydaySans-Medium-Web.woff') format('woff'),
+         url('https://file.squarespace-cdn.com/content/v2/namespaces/fonts/libraries/691634dce384e148b8cb9633/assets/0e075124-70ad-4d56-9b96-dc08dca17328/font.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Fallbacks for bolder weights, mapping them to the Medium font with simulated bolding by the browser */
+@font-face {
+    font-family: 'Everyday Sans Web';
+    src: url('EverydaySans-Medium-Web.woff') format('woff'),
+         url('https://file.squarespace-cdn.com/content/v2/namespaces/fonts/libraries/691634dce384e148b8cb9633/assets/0e075124-70ad-4d56-9b96-dc08dca17328/font.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Everyday Sans Web';
+    src: url('EverydaySans-Medium-Web.woff') format('woff'),
+         url('https://file.squarespace-cdn.com/content/v2/namespaces/fonts/libraries/691634dce384e148b8cb9633/assets/0e075124-70ad-4d56-9b96-dc08dca17328/font.woff') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Everyday Sans Web';
+    src: url('EverydaySans-Medium-Web.woff') format('woff'),
+         url('https://file.squarespace-cdn.com/content/v2/namespaces/fonts/libraries/691634dce384e148b8cb9633/assets/0e075124-70ad-4d56-9b96-dc08dca17328/font.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}

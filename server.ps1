@@ -37,6 +37,8 @@ while ($listener.IsListening) {
             elseif ($filePath -like "*.js") { $response.ContentType = "application/javascript; charset=utf-8" }
             elseif ($filePath -like "*.svg") { $response.ContentType = "image/svg+xml; charset=utf-8" }
             elseif ($filePath -like "*.png") { $response.ContentType = "image/png" }
+            elseif ($filePath -like "*.woff") { $response.ContentType = "font/woff" }
+            elseif ($filePath -like "*.woff2") { $response.ContentType = "font/woff2" }
             
             $response.ContentLength64 = $bytes.Length
             $response.OutputStream.Write($bytes, 0, $bytes.Length)

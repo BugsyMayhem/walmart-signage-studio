@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         sizePreset: "2x10.5",
         widthInches: 2,
         heightInches: 10.5,
-        fontStyle: "Outfit",
+        fontStyle: "Everyday Sans Regular",
         textCategory: "ACTION ALLEY",
         textBadge: "BK",
         textAisleLabel: "AISLE",
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         textSpaceValuesRaw: "1,2,3,4,5",
         textSpaceValues: ["1", "2", "3", "4", "5"],
         colorTheme: "walmart-classic",
-        bgColor: "#0071CE",       // Official Walmart True Blue
+        bgColor: "#0053E2",       // Official Walmart True Blue
         accentColor: "#FFC220",   // Official Walmart Spark Yellow
         textColor: "#FFFFFF",     // White
         decalSpark: "top-header",
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             el.customColorInputs.classList.add("hidden");
             if (state.colorTheme === "walmart-classic") {
-                state.bgColor = "#0071CE";      // Walmart True Blue
+                state.bgColor = "#0053E2";      // Walmart True Blue
                 state.accentColor = "#FFC220";  // Walmart Spark Yellow
                 state.textColor = "#FFFFFF";    // White
             } else if (state.colorTheme === "walmart-garden") {
@@ -429,7 +429,80 @@ document.addEventListener("DOMContentLoaded", () => {
         const w = state.widthInches * scaleFactor;
         const h = state.heightInches * scaleFactor;
         
-        const fontUrl = `https://fonts.googleapis.com/css2?family=${state.fontStyle.replace(' ', '+')}:wght@400;600;700;800&display=swap`;
+        const fontUrl = state.fontStyle.startsWith("Everyday Sans")
+            ? "fonts/branding/fonts.css"
+            : (state.fontStyle.startsWith("Bogle")
+                ? "https://i5.walmartimages.com/dfw/63fd9f59-6ace/57132652-ed71-42ee-9bc8-c256b0073184/v1/BogleWeb.css"
+                : `https://fonts.googleapis.com/css2?family=${state.fontStyle.replace(' ', '+')}:wght@400;600;700;800&display=swap`);
+
+        // Helper to get clean font weights based on the active font style selection
+        function getSVGStyle(fontStyle) {
+            if (fontStyle.startsWith("Everyday Sans")) {
+                let baseWeight = 400;
+                let wLight = 300, wMedium = 400, wBold = 500, wExtraBold = 700;
+                
+                if (fontStyle.endsWith("Light")) {
+                    baseWeight = 300;
+                    wLight = 300; wMedium = 300; wBold = 400; wExtraBold = 500;
+                } else if (fontStyle.endsWith("Regular")) {
+                    baseWeight = 400;
+                    wLight = 300; wMedium = 400; wBold = 500; wExtraBold = 700;
+                } else if (fontStyle.endsWith("Medium")) {
+                    baseWeight = 500;
+                    wLight = 400; wMedium = 500; wBold = 700; wExtraBold = 700;
+                } else if (fontStyle.endsWith("Bold")) {
+                    baseWeight = 700;
+                    wLight = 500; wMedium = 700; wBold = 700; wExtraBold = 900;
+                } else if (fontStyle.endsWith("Black")) {
+                    baseWeight = 900;
+                    wLight = 700; wMedium = 900; wBold = 900; wExtraBold = 900;
+                }
+
+                return `
+                    .sign-text {
+                        font-family: 'Everyday Sans Web', 'Outfit', sans-serif;
+                        text-anchor: middle;
+                        font-weight: ${baseWeight};
+                    }
+                    .text-light { font-weight: ${wLight}; }
+                    .text-medium { font-weight: ${wMedium}; }
+                    .text-bold { font-weight: ${wBold}; }
+                    .text-extra-bold { font-weight: ${wExtraBold}; }
+                `;
+            } else if (fontStyle.startsWith("Bogle")) {
+                let baseWeight = 400;
+                let wLight = 400, wMedium = 400, wBold = 700, wExtraBold = 700;
+                
+                if (fontStyle.endsWith("Bold")) {
+                    baseWeight = 700;
+                    wLight = 700; wMedium = 700; wBold = 700; wExtraBold = 700;
+                }
+
+                return `
+                    .sign-text {
+                        font-family: 'BogleWeb', 'Outfit', sans-serif;
+                        text-anchor: middle;
+                        font-weight: ${baseWeight};
+                    }
+                    .text-light { font-weight: ${wLight}; }
+                    .text-medium { font-weight: ${wMedium}; }
+                    .text-bold { font-weight: ${wBold}; }
+                    .text-extra-bold { font-weight: ${wExtraBold}; }
+                `;
+            } else {
+                return `
+                    .sign-text {
+                        font-family: '${fontStyle}', 'Outfit', sans-serif;
+                        text-anchor: middle;
+                        font-weight: 700;
+                    }
+                    .text-light { font-weight: 400; }
+                    .text-medium { font-weight: 500; }
+                    .text-bold { font-weight: 700; }
+                    .text-extra-bold { font-weight: 800; }
+                `;
+            }
+        }
 
         // Format: Vertical Upright Rack Tag (Photo #1)
         if (state.signLayoutFormat === "vertical-rack") {
@@ -451,12 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <defs>
         <style>
             @import url('${fontUrl}');
-            .sign-text {
-                font-family: '${state.fontStyle}', 'Outfit', sans-serif;
-                text-anchor: middle;
-                font-weight: 700;
-            }
-            .text-extra-bold { font-weight: 800; }
+            ${getSVGStyle(state.fontStyle)}
         </style>
     </defs>
     
@@ -505,13 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <defs>
         <style>
             @import url('${fontUrl}');
-            .sign-text {
-                font-family: '${state.fontStyle}', 'Outfit', sans-serif;
-                text-anchor: middle;
-                font-weight: 700;
-            }
-            .text-bold { font-weight: 700; }
-            .text-extra-bold { font-weight: 800; }
+            ${getSVGStyle(state.fontStyle)}
         </style>
     </defs>
     
@@ -608,7 +670,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const textClr = state.textColor;
         let dividerClr = accent;
         if (state.colorTheme === "walmart-classic") {
-            dividerClr = "#76B2E6";
+            dividerClr = "#4DBDF5";
         } else if (state.colorTheme === "walmart-garden") {
             dividerClr = "#4FB08C";
         } else if (state.colorTheme === "walmart-pharmacy") {
@@ -743,15 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <defs>
         <style>
             @import url('${fontUrl}');
-            .sign-text {
-                font-family: '${state.fontStyle}', 'Outfit', sans-serif;
-                text-anchor: middle;
-                font-weight: 700;
-            }
-            .text-light { font-weight: 400; }
-            .text-medium { font-weight: 500; }
-            .text-bold { font-weight: 700; }
-            .text-extra-bold { font-weight: 800; }
+            ${getSVGStyle(state.fontStyle)}
         </style>
         ${patternDef}
     </defs>

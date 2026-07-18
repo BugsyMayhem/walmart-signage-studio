@@ -48,13 +48,19 @@ def merge_and_deploy():
         }
     }
     
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) WalmartSignageStudio/1.0"
+    }
+    
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"token {token}"
+    
     req = urllib.request.Request(
         "https://api.github.com/gists",
         data=json.dumps(gist_data).encode("utf-8"),
-        headers={
-            "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) WalmartSignageStudio/1.0"
-        }
+        headers=headers
     )
     
     try:
