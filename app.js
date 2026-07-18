@@ -1,6 +1,6 @@
 // Walmart Signage Studio Application Logic
 
-document.addEventListener("DOMContentLoaded", () => {
+function initApplication() {
     // State management
     const state = {
         sizePreset: "2x10.5",
@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
         barcodeTextGroup: document.getElementById("barcode-text-group"),
         textBarcodeLabel: document.getElementById("text-barcode-label"),
         btnExportSvg: document.getElementById("btn-export-svg"),
+        btnExportPng: document.getElementById("btn-export-png"),
+        btnExportJpg: document.getElementById("btn-export-jpg"),
         btnPrint: document.getElementById("btn-print"),
         btnCopyCode: document.getElementById("btn-copy-code"),
         previewArea: document.getElementById("preview-area"),
@@ -933,11 +935,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Export SVGs Trigger
     function exportSVGs() {
         getSignConfigs().forEach(config => {
-            const svgMarkup = buildSignSVG(config.spaceValue);
+            const svgMarkup = buildSignSVG(
+                config.spaceValue,
+                config.aisleOverride    !== undefined ? config.aisleOverride    : null,
+                config.categoryOverride !== undefined ? config.categoryOverride : null,
+                config.barcodeOverride  !== undefined ? config.barcodeOverride  : null
+            );
             const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
-            const fileName = `walmart_sign_aisle_${state.textAisleValue}_space_${config.spaceValue}_${state.widthInches}x${state.heightInches}.svg`
+            const fileName = `walmart_sign_aisle_${config.aisleOverride || state.textAisleValue}_space_${config.spaceValue}_${state.widthInches}x${state.heightInches}.svg`
                 .toLowerCase()
                 .replace(/\s+/g, "_");
             a.href = url;
@@ -947,6 +954,201 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
+    }
+
+    // Export PNG or JPEG Images Trigger
+    function exportImages(format = "png") {
+        const configs = getSignConfigs();
+        if (configs.length === 0) return;
+        
+        const isKioskBatchSize = (state.widthInches === 2 && state.heightInches === 10.5);
+        
+        if (format === "jpeg" && isKioskBatchSize) {
+            // ── 600 DPI render for crisp photo-lab prints ──────────────────
+            // Each 2" × 10.5" sign → 1200 × 6300 px
+            // Full 11" × 14" sheet → 6600 × 8400 px
+            const kioskDpi = 600;
+            const signW = Math.round(state.widthInches  * kioskDpi); // 1200
+            const signH = Math.round(state.heightInches * kioskDpi); // 6300
+
+            // Load all sign images concurrently, hinting the browser at the
+            // target pixel size so the SVG rasterises at full 600 DPI detail.
+            const promises = configs.map(config => {
+                return new Promise((resolve, reject) => {
+                    const svgMarkup = buildSignSVG(
+                        config.spaceValue,
+                        config.aisleOverride    !== undefined ? config.aisleOverride    : null,
+                        config.categoryOverride !== undefined ? config.categoryOverride : null,
+                        config.barcodeOverride  !== undefined ? config.barcodeOverride  : null
+                    );
+                    const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+                    const url = URL.createObjectURL(blob);
+                    const img = new Image();
+                    // Hint pixel dimensions so the SVG rasterises at 600 DPI
+                    img.width  = signW;
+                    img.height = signH;
+                    img.onload = () => {
+                        resolve({ img, config, url });
+                    };
+                    img.onerror = (err) => {
+                        URL.revokeObjectURL(url);
+                        reject(err);
+                    };
+                    img.src = url;
+                });
+            });
+
+            Promise.all(promises).then(loadedItems => {
+                // Slice loaded signs into batches of up to 5
+                const batchSize = 5;
+                const batches = [];
+                for (let i = 0; i < loadedItems.length; i += batchSize) {
+                    batches.push(loadedItems.slice(i, i + batchSize));
+                }
+
+                batches.forEach((batch, batchIndex) => {
+                    // 11" × 14" canvas at 600 DPI → 6600 × 8400 px
+                    const sheetW = 6600;
+                    const sheetH = 8400;
+                    const canvas = document.createElement("canvas");
+                    canvas.width  = sheetW;
+                    canvas.height = sheetH;
+                    const ctx = canvas.getContext("2d");
+
+                    // Crisp pixel rendering for clean edges
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = "high";
+
+                    // Fill background with solid white
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.fillRect(0, 0, sheetW, sheetH);
+
+                    // Layout: 100px left margin, 100px gap between signs
+                    // Vertical centering: (8400 - 6300) / 2 = 1050px
+                    const startX = 100;
+                    const gapX  = 100;
+                    const startY = Math.round((sheetH - signH) / 2); // 1050
+
+                    batch.forEach((item, index) => {
+                        const x = startX + index * (signW + gapX);
+                        ctx.drawImage(item.img, x, startY, signW, signH);
+
+                        // 1px light-gray cutting guide border
+                        ctx.strokeStyle = "#D3D3D3";
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x - 0.5, startY - 0.5, signW + 1, signH + 1);
+
+                        URL.revokeObjectURL(item.url);
+                    });
+
+                    // Export at maximum JPEG quality
+                    const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
+                    const a = document.createElement("a");
+                    const sheetNum    = batchIndex + 1;
+                    const totalSheets = batches.length;
+
+                    const fileName = `walmart_signs_aisle_${state.textAisleValue}_sheet_${sheetNum}_of_${totalSheets}_600dpi.jpg`
+                        .toLowerCase()
+                        .replace(/\s+/g, "_");
+                    a.href = dataUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+            }).catch(err => {
+                console.error("Failed to load kiosk batch images:", err);
+            });
+
+            
+        } else {
+            // PNG (or non-kiosk JPEGs) download individually
+            configs.forEach(config => {
+                const svgMarkup = buildSignSVG(
+                    config.spaceValue,
+                    config.aisleOverride    !== undefined ? config.aisleOverride    : null,
+                    config.categoryOverride !== undefined ? config.categoryOverride : null,
+                    config.barcodeOverride  !== undefined ? config.barcodeOverride  : null
+                );
+                
+                // Render at high-resolution (300 DPI)
+                const dpi = 300;
+                const w = Math.round(state.widthInches * dpi);
+                const h = Math.round(state.heightInches * dpi);
+                
+                const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement("canvas");
+                    const isKioskSize = (w <= 3300 && h <= 4200);
+                    
+                    if (format === "jpeg" && isKioskSize) {
+                        canvas.width = 3300;
+                        canvas.height = 4200;
+                    } else {
+                        canvas.width = w;
+                        canvas.height = h;
+                    }
+                    
+                    const ctx = canvas.getContext("2d");
+                    
+                    // For JPEGs, fill with white to avoid black backgrounds in transparent regions
+                    if (format === "jpeg") {
+                        ctx.fillStyle = "#FFFFFF";
+                        if (isKioskSize) {
+                            ctx.fillRect(0, 0, 3300, 4200);
+                        } else {
+                            ctx.fillRect(0, 0, w, h);
+                        }
+                    }
+                    
+                    if (format === "jpeg" && isKioskSize) {
+                        // Center the sign on the 11" x 14" canvas
+                        const signX = Math.round((3300 - w) / 2);
+                        const signY = Math.round((4200 - h) / 2);
+                        
+                        ctx.drawImage(img, signX, signY, w, h);
+                        
+                        // Draw a faint, 1-pixel light gray bounding border around the sign
+                        ctx.strokeStyle = "#D3D3D3";
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(signX - 0.5, signY - 0.5, w + 1, h + 1);
+                    } else {
+                        ctx.drawImage(img, 0, 0, w, h);
+                    }
+                    
+                    const mimeType = format === "png" ? "image/png" : "image/jpeg";
+                    const quality = format === "jpeg" ? 0.95 : undefined;
+                    const dataUrl = canvas.toDataURL(mimeType, quality);
+                    
+                    const a = document.createElement("a");
+                    const extension = format === "jpeg" ? "jpg" : "png";
+                    
+                    let fileSuffix = `${state.widthInches}x${state.heightInches}`;
+                    if (format === "jpeg" && isKioskSize) {
+                        fileSuffix = "11x14_kiosk";
+                    }
+                    
+                    const fileName = `walmart_sign_aisle_${config.aisleOverride || state.textAisleValue}_space_${config.spaceValue}_${fileSuffix}.${extension}`
+                        .toLowerCase()
+                        .replace(/\s+/g, "_");
+                    a.href = dataUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    URL.revokeObjectURL(url);
+                };
+                img.onerror = function(err) {
+                    console.error("Failed to render SVG to canvas: ", err);
+                    URL.revokeObjectURL(url);
+                };
+                img.src = url;
+            });
+        }
     }
 
     // Copy SVG Markup to Clipboard
@@ -1043,6 +1245,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Action button listeners
     el.btnExportSvg.addEventListener("click", exportSVGs);
+    el.btnExportPng.addEventListener("click", () => exportImages("png"));
+    el.btnExportJpg.addEventListener("click", () => exportImages("jpeg"));
     el.btnPrint.addEventListener("click", () => window.print());
     el.btnCopyCode.addEventListener("click", copySVGMarkup);
 
@@ -1094,4 +1298,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Run initialization
     initInputs();
     render();
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initApplication);
+} else {
+    initApplication();
+}

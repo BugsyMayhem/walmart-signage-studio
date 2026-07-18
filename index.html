@@ -245,9 +245,17 @@
 
             <!-- Export Actions -->
             <footer class="sidebar-actions">
-                <button id="btn-export-svg" class="btn btn-primary">
-                    <i class="fa-solid fa-download"></i> Download Vector SVGs
-                </button>
+                <div class="export-group">
+                    <button id="btn-export-svg" class="btn btn-primary btn-split-left" title="Download Vector SVG">
+                        <i class="fa-solid fa-download"></i> SVG
+                    </button>
+                    <button id="btn-export-png" class="btn btn-primary btn-split-mid" title="Download High-Res PNG">
+                        <i class="fa-solid fa-file-image"></i> PNG
+                    </button>
+                    <button id="btn-export-jpg" class="btn btn-primary btn-split-right" title="Download High-Res JPEG">
+                        <i class="fa-solid fa-file-image"></i> JPEG
+                    </button>
+                </div>
                 <button id="btn-print" class="btn btn-secondary">
                     <i class="fa-solid fa-print"></i> Print Signage Sheet
                 </button>

@@ -297,6 +297,35 @@ input[type="color"]::-webkit-color-swatch {
     background-color: rgba(10, 15, 29, 0.4);
 }
 
+.export-group {
+    display: flex;
+    width: 100%;
+    gap: 1px;
+}
+
+.export-group .btn {
+    border-radius: 0;
+    font-size: 0.85rem;
+    padding: 12px 8px;
+}
+
+.export-group .btn-split-left {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    flex-grow: 2;
+}
+
+.export-group .btn-split-mid {
+    flex-grow: 1.2;
+}
+
+.export-group .btn-split-right {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    flex-grow: 1.2;
+}
+
+
 .btn {
     width: 100%;
     padding: 12px 16px;
