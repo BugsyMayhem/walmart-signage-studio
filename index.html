@@ -79,13 +79,25 @@
                         <label for="scale-badge">Badge Scale (<span id="scale-badge-value">195%</span>)</label>
                         <input type="range" id="scale-badge" min="50" max="200" value="195" step="5">
                     </div>
-                    <div class="form-group">
-                        <label for="scale-aisle">Aisle Text Scale (<span id="scale-aisle-value">375%</span>)</label>
-                        <input type="range" id="scale-aisle" min="50" max="400" value="375" step="5">
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="scale-aisle-label">Aisle Label (<span id="scale-aisle-label-value">375%</span>)</label>
+                            <input type="range" id="scale-aisle-label" min="50" max="400" value="375" step="5">
+                        </div>
+                        <div class="form-group half">
+                            <label for="scale-aisle-number">Aisle # (<span id="scale-aisle-number-value">375%</span>)</label>
+                            <input type="range" id="scale-aisle-number" min="50" max="400" value="375" step="5">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="scale-space">Space Text Scale (<span id="scale-space-value">375%</span>)</label>
-                        <input type="range" id="scale-space" min="50" max="400" value="375" step="5">
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="scale-space-label">Space Label (<span id="scale-space-label-value">375%</span>)</label>
+                            <input type="range" id="scale-space-label" min="50" max="400" value="375" step="5">
+                        </div>
+                        <div class="form-group half">
+                            <label for="scale-space-number">Space # (<span id="scale-space-number-value">375%</span>)</label>
+                            <input type="range" id="scale-space-number" min="50" max="400" value="375" step="5">
+                        </div>
                     </div>
                 </section>
 
@@ -113,8 +125,8 @@
                             <input type="text" id="text-aisle-label" value="AISLE">
                         </div>
                         <div class="form-group one-third">
-                            <label for="text-aisle-value">Aisle #</label>
-                            <input type="text" id="text-aisle-value" value="1" placeholder="e.g. 1">
+                            <label for="text-aisle-value">Aisle # (List)</label>
+                            <input type="text" id="text-aisle-value" value="1" placeholder="e.g. 1, 2, 3">
                         </div>
                     </div>
 
@@ -243,21 +255,13 @@
                 </section>
             </div>
 
-            <!-- Export Actions -->
+            <!-- Export & Print Actions -->
             <footer class="sidebar-actions">
-                <div class="export-group">
-                    <button id="btn-export-svg" class="btn btn-primary btn-split-left" title="Download Vector SVG">
-                        <i class="fa-solid fa-download"></i> SVG
-                    </button>
-                    <button id="btn-export-png" class="btn btn-primary btn-split-mid" title="Download High-Res PNG">
-                        <i class="fa-solid fa-file-image"></i> PNG
-                    </button>
-                    <button id="btn-export-jpg" class="btn btn-primary btn-split-right" title="Download High-Res JPEG">
-                        <i class="fa-solid fa-file-image"></i> JPEG
-                    </button>
-                </div>
-                <button id="btn-print" class="btn btn-secondary">
-                    <i class="fa-solid fa-print"></i> Print Signage Sheet
+                <button id="btn-print" class="btn btn-primary" title="Print Signage Sheet or Save as PDF">
+                    <i class="fa-solid fa-print"></i> Print Signage Sheet (PDF)
+                </button>
+                <button id="btn-export-jpg" class="btn btn-secondary" title="Download High-Res JPEG Image(s)">
+                    <i class="fa-solid fa-file-image"></i> Download JPEG Image(s)
                 </button>
                 <button id="btn-copy-code" class="btn btn-tertiary">
                     <i class="fa-solid fa-code"></i> Copy SVG Markup
@@ -288,21 +292,22 @@
                 </div>
             </div>
 
-            <!-- Suggestion / Improvements Callout -->
+            <!-- Printing Tips Callout -->
             <section class="improvements-bar">
                 <div class="info-card">
-                    <h4><i class="fa-solid fa-wand-magic-sparkles"></i> Antigravity Design Notes</h4>
+                    <h4><i class="fa-solid fa-print"></i> Printing Tips</h4>
                     <p id="design-notes-text">
-                        <strong>Improvements Added:</strong> Official Walmart blue (#0071CE) and spark yellow (#FFC220) colors are applied. 
-                        We've upgraded typography to Google Outfit (which mirrors the new "Everyday Sans" brand font) and improved spacing, line weights, and logo alignment.
+                        <strong>Print Signage Sheet (PDF):</strong> 8.5" &times; 11" Card Stock (3 Lg or 10 Sm signs/sheet)<br>
+                        <strong>Download JPEG Image(s):</strong> 11" &times; 14" Photo Paper (WM Photo Center &mdash; 5 Lg or 16 Sm signs/sheet)
                     </p>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Inject Walmart Spark scripts and app scripts -->
+    <!-- Inject external libraries and app scripts -->
+    <script src="jszip.min.js"></script>
     <script src="logo-spark.js"></script>
-    <script src="app.js?v=1.2"></script>
+    <script src="app.js?v=1.3"></script>
 </body>
 </html>

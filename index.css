@@ -312,17 +312,13 @@ input[type="color"]::-webkit-color-swatch {
 .export-group .btn-split-left {
     border-top-left-radius: var(--radius-sm);
     border-bottom-left-radius: var(--radius-sm);
-    flex-grow: 2;
-}
-
-.export-group .btn-split-mid {
-    flex-grow: 1.2;
+    flex: 1;
 }
 
 .export-group .btn-split-right {
     border-top-right-radius: var(--radius-sm);
     border-bottom-right-radius: var(--radius-sm);
-    flex-grow: 1.2;
+    flex: 1;
 }
 
 

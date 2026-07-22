@@ -10,6 +10,8 @@ function initApplication() {
         textCategory: "ACTION ALLEY",
         textBadge: "BK",
         textAisleLabel: "AISLE",
+        textAisleValueRaw: "1",
+        textAisleValues: ["1"],
         textAisleValue: "1",
         textSpaceLabel: "SPACE",
         textSpaceValuesRaw: "1,2,3,4,5",
@@ -26,8 +28,10 @@ function initApplication() {
         textBarcodeLabel: "",
         scaleCategory: 100,
         scaleBadge: 195,
-        scaleAisle: 375,
-        scaleSpace: 375,
+        scaleAisleLabel: 375,
+        scaleAisleNumber: 375,
+        scaleSpaceLabel: 375,
+        scaleSpaceNumber: 375,
         signLayoutFormat: "walmart-lg-1",
         zoomPercent: 50,
         inputMode: "standard",
@@ -61,8 +65,6 @@ function initApplication() {
         toggleBarcode: document.getElementById("toggle-barcode"),
         barcodeTextGroup: document.getElementById("barcode-text-group"),
         textBarcodeLabel: document.getElementById("text-barcode-label"),
-        btnExportSvg: document.getElementById("btn-export-svg"),
-        btnExportPng: document.getElementById("btn-export-png"),
         btnExportJpg: document.getElementById("btn-export-jpg"),
         btnPrint: document.getElementById("btn-print"),
         btnCopyCode: document.getElementById("btn-copy-code"),
@@ -82,10 +84,14 @@ function initApplication() {
         scaleCategoryValue: document.getElementById("scale-category-value"),
         scaleBadge: document.getElementById("scale-badge"),
         scaleBadgeValue: document.getElementById("scale-badge-value"),
-        scaleAisle: document.getElementById("scale-aisle"),
-        scaleAisleValue: document.getElementById("scale-aisle-value"),
-        scaleSpace: document.getElementById("scale-space"),
-        scaleSpaceValue: document.getElementById("scale-space-value"),
+        scaleAisleLabel: document.getElementById("scale-aisle-label"),
+        scaleAisleLabelValue: document.getElementById("scale-aisle-label-value"),
+        scaleAisleNumber: document.getElementById("scale-aisle-number"),
+        scaleAisleNumberValue: document.getElementById("scale-aisle-number-value"),
+        scaleSpaceLabel: document.getElementById("scale-space-label"),
+        scaleSpaceLabelValue: document.getElementById("scale-space-label-value"),
+        scaleSpaceNumber: document.getElementById("scale-space-number"),
+        scaleSpaceNumberValue: document.getElementById("scale-space-number-value"),
         decalSparkScale: document.getElementById("decal-spark-scale"),
         sparkScaleValue: document.getElementById("spark-scale-value"),
         signLayoutFormat: document.getElementById("sign-layout-format"),
@@ -123,10 +129,14 @@ function initApplication() {
         el.scaleCategoryValue.textContent = `${state.scaleCategory}%`;
         el.scaleBadge.value = state.scaleBadge;
         el.scaleBadgeValue.textContent = `${state.scaleBadge}%`;
-        el.scaleAisle.value = state.scaleAisle;
-        el.scaleAisleValue.textContent = `${state.scaleAisle}%`;
-        el.scaleSpace.value = state.scaleSpace;
-        el.scaleSpaceValue.textContent = `${state.scaleSpace}%`;
+        el.scaleAisleLabel.value = state.scaleAisleLabel;
+        el.scaleAisleLabelValue.textContent = `${state.scaleAisleLabel}%`;
+        el.scaleAisleNumber.value = state.scaleAisleNumber;
+        el.scaleAisleNumberValue.textContent = `${state.scaleAisleNumber}%`;
+        el.scaleSpaceLabel.value = state.scaleSpaceLabel;
+        el.scaleSpaceLabelValue.textContent = `${state.scaleSpaceLabel}%`;
+        el.scaleSpaceNumber.value = state.scaleSpaceNumber;
+        el.scaleSpaceNumberValue.textContent = `${state.scaleSpaceNumber}%`;
         el.decalSparkScale.value = state.decalSparkScale;
         el.sparkScaleValue.textContent = `${state.decalSparkScale}%`;
         el.watermarkOpacity.value = state.watermarkOpacity;
@@ -174,7 +184,9 @@ function initApplication() {
         state.textCategory = el.textCategory.value.trim().toUpperCase();
         state.textBadge = el.textBadge.value.trim().toUpperCase();
         state.textAisleLabel = el.textAisleLabel.value.trim().toUpperCase();
-        state.textAisleValue = el.textAisleValue.value.trim().toUpperCase();
+        state.textAisleValueRaw = el.textAisleValue.value;
+        state.textAisleValues = parseSpaceValues(state.textAisleValueRaw);
+        state.textAisleValue = state.textAisleValues.length > 0 ? state.textAisleValues[0] : "1";
         state.textSpaceLabel = el.textSpaceLabel.value.trim().toUpperCase();
         
         state.inputMode = el.inputMode.value;
@@ -253,10 +265,14 @@ function initApplication() {
         el.scaleCategoryValue.textContent = `${state.scaleCategory}%`;
         state.scaleBadge = parseInt(el.scaleBadge.value) || 100;
         el.scaleBadgeValue.textContent = `${state.scaleBadge}%`;
-        state.scaleAisle = parseInt(el.scaleAisle.value) || 100;
-        el.scaleAisleValue.textContent = `${state.scaleAisle}%`;
-        state.scaleSpace = parseInt(el.scaleSpace.value) || 100;
-        el.scaleSpaceValue.textContent = `${state.scaleSpace}%`;
+        state.scaleAisleLabel = parseInt(el.scaleAisleLabel.value) || 100;
+        el.scaleAisleLabelValue.textContent = `${state.scaleAisleLabel}%`;
+        state.scaleAisleNumber = parseInt(el.scaleAisleNumber.value) || 100;
+        el.scaleAisleNumberValue.textContent = `${state.scaleAisleNumber}%`;
+        state.scaleSpaceLabel = parseInt(el.scaleSpaceLabel.value) || 100;
+        el.scaleSpaceLabelValue.textContent = `${state.scaleSpaceLabel}%`;
+        state.scaleSpaceNumber = parseInt(el.scaleSpaceNumber.value) || 100;
+        el.scaleSpaceNumberValue.textContent = `${state.scaleSpaceNumber}%`;
 
         // Update header dimension displays
         el.sizeDimensionsDisplay.textContent = `${state.widthInches.toFixed(2)}" x ${state.heightInches.toFixed(2)}" (${state.sizePreset === 'custom' ? 'Custom' : 'Preset'})`;
@@ -544,8 +560,8 @@ function initApplication() {
         ${barcodeSVG}
     </g>
     
-    <!-- Giant Space Number in Yellow Box -->
-    <text x="${w * 0.63}" y="${h * 0.27}" fill="#0A1128" class="sign-text text-extra-bold" font-size="${w * 0.38}" dy="0.35em">${spaceValue}</text>
+    <!-- Giant Space Number in Yellow Box (Auto-fitted for multi-digits) -->
+    <text x="${w * 0.63}" y="${h * 0.27}" fill="#0A1128" class="sign-text text-extra-bold" font-size="${w * 0.38 * (spaceValue.toString().trim().length <= 1 ? 1.0 : Math.min(1.0, 1.85 / spaceValue.toString().trim().length))}" dy="0.35em">${spaceValue}</text>
     
     <!-- Stacked Aisle Code in Red Box -->
     <text x="${w * 0.63}" y="${h * 0.68}" fill="#FFFFFF" class="sign-text text-extra-bold" font-size="${w * 0.22}" dy="0.35em">${aisleAlpha.toUpperCase()}</text>
@@ -585,8 +601,8 @@ function initApplication() {
     <!-- Top Left: Date -->
     <text x="${w * 0.05}" y="${h * 0.18}" fill="#475569" class="sign-text text-bold" font-size="${h * 0.09}" text-anchor="start" dy="0.35em">${dateStr}</text>
     
-    <!-- Center: Giant Space Value -->
-    <text x="${w * 0.45}" y="${h * 0.28}" fill="#0A1128" class="sign-text text-extra-bold" font-size="${h * 0.38}" text-anchor="middle" dy="0.35em">${spaceValue}</text>
+    <!-- Center: Giant Space Value (Auto-fitted for multi-digits) -->
+    <text x="${w * 0.45}" y="${h * 0.28}" fill="#0A1128" class="sign-text text-extra-bold" font-size="${h * 0.38 * (spaceValue.toString().trim().length <= 1 ? 1.0 : Math.min(1.0, 1.85 / spaceValue.toString().trim().length))}" text-anchor="middle" dy="0.35em">${spaceValue}</text>
     
     <!-- Right: Stacked Aisle Code -->
     <text x="${w * 0.88}" y="${h * 0.16}" fill="#0A1128" class="sign-text text-bold" font-size="${h * 0.14}" text-anchor="middle" dy="0.35em">${aisleAlpha.toUpperCase()}</text>
@@ -601,9 +617,20 @@ function initApplication() {
         // Individual scaling multipliers
         const scaleCategory = state.scaleCategory / 100;
         const scaleBadge = state.scaleBadge / 100;
-        const scaleAisle = state.scaleAisle / 100;
-        const scaleSpace = state.scaleSpace / 100;
+        const scaleAisleLabel = (state.scaleAisleLabel || state.scaleAisle || 375) / 100;
+        const scaleAisleNumber = (state.scaleAisleNumber || state.scaleAisle || 375) / 100;
+        const scaleSpaceLabel = (state.scaleSpaceLabel || state.scaleSpace || 375) / 100;
+        const scaleSpaceNumber = (state.scaleSpaceNumber || state.scaleSpace || 375) / 100;
         
+        // Auto-fit multi-digit numbers (e.g. 200, 100, 800, 900) so they fit cleanly inside sign margins
+        const spaceStr = (spaceValue || "").toString().trim();
+        const spaceCharLen = spaceStr.length;
+        const autoFitSpaceNum = spaceCharLen <= 1 ? 1.0 : Math.min(1.0, 1.85 / spaceCharLen);
+
+        const aisleStr = (aisleVal || "").toString().trim();
+        const aisleCharLen = aisleStr.length;
+        const autoFitAisleNum = aisleCharLen <= 1 ? 1.0 : Math.min(1.0, 1.85 / aisleCharLen);
+
         // Scale the badge circle/pill radius based on badge scale (as requested)
         const radius = w * 0.23 * scaleBadge;
 
@@ -612,11 +639,12 @@ function initApplication() {
         const dividerStroke = Math.max(2, h * 0.0015);
         // Font sizes (relative to their own specific scales)
         const catFontSize = w * 0.065 * scaleCategory;
-        const labelFontSize = w * 0.055 * scaleAisle;
-        const valueFontSize = w * 0.185 * scaleAisle;
-        const spaceLabelFontSize = w * 0.055 * scaleSpace;
-        const spaceValueFontSize = w * 0.185 * scaleSpace;
-        const circleBadgeFontSize = radius * 1.15; // Proportional to scaled radius
+        const labelFontSize = w * 0.055 * scaleAisleLabel;
+        const valueFontSize = w * 0.185 * scaleAisleNumber * autoFitAisleNum;
+        const spaceLabelFontSize = w * 0.055 * scaleSpaceLabel;
+        const spaceValueFontSize = w * 0.185 * scaleSpaceNumber * autoFitSpaceNum;
+        const badgeTextLen = (state.textBadge || "").length;
+        const circleBadgeFontSize = badgeTextLen === 1 ? radius * 1.45 : radius * 1.15; // Single letter larger to fill circle
         const pillBadgeFontSize = radius * 0.95;   // Proportional to scaled radius
 
         // Spark Decal SVG logic (Centered Spark size ~41px, custom scale)
@@ -700,7 +728,6 @@ function initApplication() {
             badgeY = (topBoundary + divider1Y) / 2;
         }
         let badgeHtml = "";
-        const badgeTextLen = state.textBadge.length;
         
         if (badgeTextLen <= 2) {
             // Perfect circle for 1 or 2 letters
@@ -887,8 +914,24 @@ function initApplication() {
             })).filter(c => c.spaceValue.length > 0);
         }
 
-        // Standard mode — comma-separated space values
-        return state.textSpaceValues.map(sv => ({ spaceValue: sv, viewWidth, viewHeight }));
+        // Standard mode — correlated comma-separated aisle and space values
+        const spaceList = state.textSpaceValues && state.textSpaceValues.length > 0 ? state.textSpaceValues : ["1"];
+        const aisleList = state.textAisleValues && state.textAisleValues.length > 0 ? state.textAisleValues : [state.textAisleValue || "1"];
+        
+        const totalSigns = Math.max(spaceList.length, aisleList.length);
+        const configs = [];
+        
+        for (let i = 0; i < totalSigns; i++) {
+            const sVal = spaceList[Math.min(i, spaceList.length - 1)];
+            const aVal = aisleList[Math.min(i, aisleList.length - 1)];
+            configs.push({
+                spaceValue: sVal,
+                aisleOverride: aVal,
+                viewWidth,
+                viewHeight
+            });
+        }
+        return configs;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -959,17 +1002,19 @@ function initApplication() {
     // Export PNG or JPEG Images Trigger
     function exportImages(format = "png") {
         const configs = getSignConfigs();
-        if (configs.length === 0) return;
-        
-        const isKioskBatchSize = (state.widthInches === 2 && state.heightInches === 10.5);
+        const isKioskBatchSize = (state.widthInches === 2 && state.heightInches === 10.5) || (state.widthInches === 1.25 && state.heightInches === 5);
         
         if (format === "jpeg" && isKioskBatchSize) {
             // ── 600 DPI render for crisp photo-lab prints ──────────────────
-            // Each 2" × 10.5" sign → 1200 × 6300 px
             // Full 11" × 14" sheet → 6600 × 8400 px
+            // Large (2" × 10.5")  → 1200 × 6300 px (5 signs/sheet)
+            // Small (1.25" × 5")  → 750 × 3000 px  (16 signs/sheet in 8×2 grid)
             const kioskDpi = 600;
-            const signW = Math.round(state.widthInches  * kioskDpi); // 1200
-            const signH = Math.round(state.heightInches * kioskDpi); // 6300
+            const signW = Math.round(state.widthInches  * kioskDpi);
+            const signH = Math.round(state.heightInches * kioskDpi);
+
+            const isSmallSign = (state.widthInches === 1.25 && state.heightInches === 5);
+            const batchSize = isSmallSign ? 16 : 5;
 
             // Load all sign images concurrently, hinting the browser at the
             // target pixel size so the SVG rasterises at full 600 DPI detail.
@@ -984,7 +1029,6 @@ function initApplication() {
                     const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
                     const url = URL.createObjectURL(blob);
                     const img = new Image();
-                    // Hint pixel dimensions so the SVG rasterises at 600 DPI
                     img.width  = signW;
                     img.height = signH;
                     img.onload = () => {
@@ -999,12 +1043,12 @@ function initApplication() {
             });
 
             Promise.all(promises).then(loadedItems => {
-                // Slice loaded signs into batches of up to 5
-                const batchSize = 5;
                 const batches = [];
                 for (let i = 0; i < loadedItems.length; i += batchSize) {
                     batches.push(loadedItems.slice(i, i + batchSize));
                 }
+
+                const sheetFiles = [];
 
                 batches.forEach((batch, batchIndex) => {
                     // 11" × 14" canvas at 600 DPI → 6600 × 8400 px
@@ -1023,130 +1067,213 @@ function initApplication() {
                     ctx.fillStyle = "#FFFFFF";
                     ctx.fillRect(0, 0, sheetW, sheetH);
 
-                    // Layout: 100px left margin, 100px gap between signs
-                    // Vertical centering: (8400 - 6300) / 2 = 1050px
-                    const startX = 100;
-                    const gapX  = 100;
-                    const startY = Math.round((sheetH - signH) / 2); // 1050
-
                     batch.forEach((item, index) => {
-                        const x = startX + index * (signW + gapX);
-                        ctx.drawImage(item.img, x, startY, signW, signH);
+                        let x, y;
+                        if (isSmallSign) {
+                            // 8 columns × 2 rows grid
+                            const col = index % 8;
+                            const row = Math.floor(index / 8);
+                            x = 100 + col * (signW + 50);
+                            y = 1000 + row * (signH + 400);
+                        } else {
+                            // 5 columns × 1 row grid
+                            x = 100 + index * (signW + 100);
+                            y = Math.round((sheetH - signH) / 2); // 1050
+                        }
+
+                        ctx.drawImage(item.img, x, y, signW, signH);
 
                         // 1px light-gray cutting guide border
                         ctx.strokeStyle = "#D3D3D3";
                         ctx.lineWidth = 1;
-                        ctx.strokeRect(x - 0.5, startY - 0.5, signW + 1, signH + 1);
+                        ctx.strokeRect(x - 0.5, y - 0.5, signW + 1, signH + 1);
 
                         URL.revokeObjectURL(item.url);
                     });
 
                     // Export at maximum JPEG quality
                     const dataUrl = canvas.toDataURL("image/jpeg", 1.0);
-                    const a = document.createElement("a");
                     const sheetNum    = batchIndex + 1;
                     const totalSheets = batches.length;
 
                     const fileName = `walmart_signs_aisle_${state.textAisleValue}_sheet_${sheetNum}_of_${totalSheets}_600dpi.jpg`
                         .toLowerCase()
                         .replace(/\s+/g, "_");
-                    a.href = dataUrl;
-                    a.download = fileName;
+
+                    sheetFiles.push({ fileName, dataUrl });
+                });
+
+                if (sheetFiles.length === 1) {
+                    const item = sheetFiles[0];
+                    const a = document.createElement("a");
+                    a.href = item.dataUrl;
+                    a.download = item.fileName;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                });
+                } else if (sheetFiles.length > 1) {
+                    if (typeof JSZip !== "undefined") {
+                        const zip = new JSZip();
+                        sheetFiles.forEach(file => {
+                            const base64Data = file.dataUrl.split(",")[1];
+                            zip.file(file.fileName, base64Data, { base64: true });
+                        });
+                        zip.generateAsync({ type: "blob" }).then(zipBlob => {
+                            const zipUrl = URL.createObjectURL(zipBlob);
+                            const a = document.createElement("a");
+                            const zipName = `walmart_signs_aisle_${state.textAisleValue}_600dpi_sheets.zip`
+                                .toLowerCase()
+                                .replace(/\s+/g, "_");
+                            a.href = zipUrl;
+                            a.download = zipName;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(zipUrl);
+                        });
+                    } else {
+                        sheetFiles.forEach((item, idx) => {
+                            setTimeout(() => {
+                                const a = document.createElement("a");
+                                a.href = item.dataUrl;
+                                a.download = item.fileName;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                            }, idx * 250);
+                        });
+                    }
+                }
             }).catch(err => {
                 console.error("Failed to load kiosk batch images:", err);
             });
 
-            
         } else {
-            // PNG (or non-kiosk JPEGs) download individually
-            configs.forEach(config => {
-                const svgMarkup = buildSignSVG(
-                    config.spaceValue,
-                    config.aisleOverride    !== undefined ? config.aisleOverride    : null,
-                    config.categoryOverride !== undefined ? config.categoryOverride : null,
-                    config.barcodeOverride  !== undefined ? config.barcodeOverride  : null
-                );
-                
-                // Render at high-resolution (300 DPI)
-                const dpi = 300;
-                const w = Math.round(state.widthInches * dpi);
-                const h = Math.round(state.heightInches * dpi);
-                
-                const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
-                const url = URL.createObjectURL(blob);
-                
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement("canvas");
-                    const isKioskSize = (w <= 3300 && h <= 4200);
+            // PNG (or non-kiosk JPEGs)
+            const promises = configs.map(config => {
+                return new Promise((resolve) => {
+                    const svgMarkup = buildSignSVG(
+                        config.spaceValue,
+                        config.aisleOverride    !== undefined ? config.aisleOverride    : null,
+                        config.categoryOverride !== undefined ? config.categoryOverride : null,
+                        config.barcodeOverride  !== undefined ? config.barcodeOverride  : null
+                    );
                     
-                    if (format === "jpeg" && isKioskSize) {
-                        canvas.width = 3300;
-                        canvas.height = 4200;
-                    } else {
-                        canvas.width = w;
-                        canvas.height = h;
-                    }
+                    // Render at high-resolution (300 DPI)
+                    const dpi = 300;
+                    const w = Math.round(state.widthInches * dpi);
+                    const h = Math.round(state.heightInches * dpi);
                     
-                    const ctx = canvas.getContext("2d");
+                    const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+                    const url = URL.createObjectURL(blob);
                     
-                    // For JPEGs, fill with white to avoid black backgrounds in transparent regions
-                    if (format === "jpeg") {
-                        ctx.fillStyle = "#FFFFFF";
-                        if (isKioskSize) {
-                            ctx.fillRect(0, 0, 3300, 4200);
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement("canvas");
+                        const isKioskSize = (w <= 3300 && h <= 4200);
+                        
+                        if (format === "jpeg" && isKioskSize) {
+                            canvas.width = 3300;
+                            canvas.height = 4200;
                         } else {
-                            ctx.fillRect(0, 0, w, h);
+                            canvas.width = w;
+                            canvas.height = h;
                         }
-                    }
-                    
-                    if (format === "jpeg" && isKioskSize) {
-                        // Center the sign on the 11" x 14" canvas
-                        const signX = Math.round((3300 - w) / 2);
-                        const signY = Math.round((4200 - h) / 2);
                         
-                        ctx.drawImage(img, signX, signY, w, h);
+                        const ctx = canvas.getContext("2d");
                         
-                        // Draw a faint, 1-pixel light gray bounding border around the sign
-                        ctx.strokeStyle = "#D3D3D3";
-                        ctx.lineWidth = 1;
-                        ctx.strokeRect(signX - 0.5, signY - 0.5, w + 1, h + 1);
-                    } else {
-                        ctx.drawImage(img, 0, 0, w, h);
-                    }
-                    
-                    const mimeType = format === "png" ? "image/png" : "image/jpeg";
-                    const quality = format === "jpeg" ? 0.95 : undefined;
-                    const dataUrl = canvas.toDataURL(mimeType, quality);
-                    
+                        if (format === "jpeg") {
+                            ctx.fillStyle = "#FFFFFF";
+                            if (isKioskSize) {
+                                ctx.fillRect(0, 0, 3300, 4200);
+                            } else {
+                                ctx.fillRect(0, 0, w, h);
+                            }
+                        }
+                        
+                        if (format === "jpeg" && isKioskSize) {
+                            const signX = Math.round((3300 - w) / 2);
+                            const signY = Math.round((4200 - h) / 2);
+                            
+                            ctx.drawImage(img, signX, signY, w, h);
+                            
+                            ctx.strokeStyle = "#D3D3D3";
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(signX - 0.5, signY - 0.5, w + 1, h + 1);
+                        } else {
+                            ctx.drawImage(img, 0, 0, w, h);
+                        }
+                        
+                        const mimeType = format === "png" ? "image/png" : "image/jpeg";
+                        const quality = format === "jpeg" ? 0.95 : undefined;
+                        const dataUrl = canvas.toDataURL(mimeType, quality);
+                        
+                        const extension = format === "jpeg" ? "jpg" : "png";
+                        let fileSuffix = `${state.widthInches}x${state.heightInches}`;
+                        if (format === "jpeg" && isKioskSize) {
+                            fileSuffix = "11x14_kiosk";
+                        }
+                        
+                        const fileName = `walmart_sign_aisle_${config.aisleOverride || state.textAisleValue}_space_${config.spaceValue}_${fileSuffix}.${extension}`
+                            .toLowerCase()
+                            .replace(/\s+/g, "_");
+                        
+                        URL.revokeObjectURL(url);
+                        resolve({ fileName, dataUrl });
+                    };
+                    img.onerror = function(err) {
+                        console.error("Failed to render SVG to canvas: ", err);
+                        URL.revokeObjectURL(url);
+                        resolve(null);
+                    };
+                    img.src = url;
+                });
+            });
+
+            Promise.all(promises).then(items => {
+                const validItems = items.filter(item => item !== null);
+                if (validItems.length === 1) {
+                    const item = validItems[0];
                     const a = document.createElement("a");
-                    const extension = format === "jpeg" ? "jpg" : "png";
-                    
-                    let fileSuffix = `${state.widthInches}x${state.heightInches}`;
-                    if (format === "jpeg" && isKioskSize) {
-                        fileSuffix = "11x14_kiosk";
-                    }
-                    
-                    const fileName = `walmart_sign_aisle_${config.aisleOverride || state.textAisleValue}_space_${config.spaceValue}_${fileSuffix}.${extension}`
-                        .toLowerCase()
-                        .replace(/\s+/g, "_");
-                    a.href = dataUrl;
-                    a.download = fileName;
+                    a.href = item.dataUrl;
+                    a.download = item.fileName;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                    
-                    URL.revokeObjectURL(url);
-                };
-                img.onerror = function(err) {
-                    console.error("Failed to render SVG to canvas: ", err);
-                    URL.revokeObjectURL(url);
-                };
-                img.src = url;
+                } else if (validItems.length > 1) {
+                    if (typeof JSZip !== "undefined") {
+                        const zip = new JSZip();
+                        validItems.forEach(item => {
+                            const base64Data = item.dataUrl.split(",")[1];
+                            zip.file(item.fileName, base64Data, { base64: true });
+                        });
+                        zip.generateAsync({ type: "blob" }).then(zipBlob => {
+                            const zipUrl = URL.createObjectURL(zipBlob);
+                            const a = document.createElement("a");
+                            const ext = format === "jpeg" ? "jpg" : format;
+                            const zipName = `walmart_signs_aisle_${state.textAisleValue}_${ext}_batch.zip`
+                                .toLowerCase()
+                                .replace(/\s+/g, "_");
+                            a.href = zipUrl;
+                            a.download = zipName;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(zipUrl);
+                        });
+                    } else {
+                        validItems.forEach((item, idx) => {
+                            setTimeout(() => {
+                                const a = document.createElement("a");
+                                a.href = item.dataUrl;
+                                a.download = item.fileName;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                            }, idx * 250);
+                        });
+                    }
+                }
             });
         }
     }
@@ -1182,31 +1309,39 @@ function initApplication() {
             el.sizePreset.value = "2x10.5";
             el.scaleCategory.value = 100;
             el.scaleBadge.value = 195;
-            el.scaleAisle.value = 375;
-            el.scaleSpace.value = 375;
+            el.scaleAisleLabel.value = 375;
+            el.scaleAisleNumber.value = 375;
+            el.scaleSpaceLabel.value = 375;
+            el.scaleSpaceNumber.value = 375;
             el.decalSparkScale.value = 200;
             el.toggleCategory.checked = false;
             el.toggleBarcode.checked = false;
             
             el.scaleCategoryValue.textContent = "100%";
             el.scaleBadgeValue.textContent = "195%";
-            el.scaleAisleValue.textContent = "375%";
-            el.scaleSpaceValue.textContent = "375%";
+            el.scaleAisleLabelValue.textContent = "375%";
+            el.scaleAisleNumberValue.textContent = "375%";
+            el.scaleSpaceLabelValue.textContent = "375%";
+            el.scaleSpaceNumberValue.textContent = "375%";
             el.sparkScaleValue.textContent = "200%";
         } else if (val === "walmart-sm-1") {
             el.sizePreset.value = "1.25x5";
             el.scaleCategory.value = 100;
             el.scaleBadge.value = 165;
-            el.scaleAisle.value = 315;
-            el.scaleSpace.value = 315;
+            el.scaleAisleLabel.value = 315;
+            el.scaleAisleNumber.value = 315;
+            el.scaleSpaceLabel.value = 315;
+            el.scaleSpaceNumber.value = 315;
             el.decalSparkScale.value = 125;
             el.toggleCategory.checked = false;
             el.toggleBarcode.checked = false;
             
             el.scaleCategoryValue.textContent = "100%";
             el.scaleBadgeValue.textContent = "165%";
-            el.scaleAisleValue.textContent = "315%";
-            el.scaleSpaceValue.textContent = "315%";
+            el.scaleAisleLabelValue.textContent = "315%";
+            el.scaleAisleNumberValue.textContent = "315%";
+            el.scaleSpaceLabelValue.textContent = "315%";
+            el.scaleSpaceNumberValue.textContent = "315%";
             el.sparkScaleValue.textContent = "125%";
         }
     });
@@ -1218,7 +1353,8 @@ function initApplication() {
         el.textSpaceLabel, el.textSpaceValues, el.colorTheme,
         el.colorBg, el.colorAccent, el.colorText, el.decalSpark,
         el.toggleCategory, el.toggleBarcode, el.textBarcodeLabel,
-        el.scaleCategory, el.scaleBadge, el.scaleAisle, el.scaleSpace,
+        el.scaleCategory, el.scaleBadge,
+        el.scaleAisleLabel, el.scaleAisleNumber, el.scaleSpaceLabel, el.scaleSpaceNumber,
         el.decalSparkScale, el.watermarkOpacity, el.signLayoutFormat
     ];
 
@@ -1244,8 +1380,6 @@ function initApplication() {
     });
 
     // Action button listeners
-    el.btnExportSvg.addEventListener("click", exportSVGs);
-    el.btnExportPng.addEventListener("click", () => exportImages("png"));
     el.btnExportJpg.addEventListener("click", () => exportImages("jpeg"));
     el.btnPrint.addEventListener("click", () => window.print());
     el.btnCopyCode.addEventListener("click", copySVGMarkup);

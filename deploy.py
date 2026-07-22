@@ -13,6 +13,9 @@ def merge_and_deploy():
     with open(os.path.join(project_dir, "index.css"), "r", encoding="utf-8") as f:
         css = f.read()
         
+    with open(os.path.join(project_dir, "jszip.min.js"), "r", encoding="utf-8") as f:
+        jszip_js = f.read()
+        
     with open(os.path.join(project_dir, "logo-spark.js"), "r", encoding="utf-8") as f:
         spark_js = f.read()
         
@@ -23,6 +26,7 @@ def merge_and_deploy():
     html = re.sub(r'<link rel="stylesheet" href="index\.css(?:\?v=[a-zA-Z0-9.]+)?">', lambda m: f"<style>\n{css}\n</style>", html)
     
     # Merge scripts
+    html = re.sub(r'<script src="jszip\.min\.js(?:\?v=[a-zA-Z0-9.]+)?"></script>', lambda m: f"<script>\n{jszip_js}\n</script>", html)
     html = re.sub(r'<script src="logo-spark\.js(?:\?v=[a-zA-Z0-9.]+)?"></script>', lambda m: f"<script>\n{spark_js}\n</script>", html)
     html = re.sub(r'<script src="app\.js(?:\?v=[a-zA-Z0-9.]+)?"></script>', lambda m: f"<script>\n{app_js}\n</script>", html)
     
