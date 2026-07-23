@@ -1327,22 +1327,23 @@ function initApplication() {
         } else if (val === "walmart-sm-1") {
             el.sizePreset.value = "1.25x5";
             el.scaleCategory.value = 100;
-            el.scaleBadge.value = 165;
+            el.scaleBadge.value = 150;
             el.scaleAisleLabel.value = 315;
             el.scaleAisleNumber.value = 315;
-            el.scaleSpaceLabel.value = 315;
+            el.scaleSpaceLabel.value = 300;
             el.scaleSpaceNumber.value = 315;
-            el.decalSparkScale.value = 125;
+            el.decalSparkScale.value = 190;
             el.toggleCategory.checked = false;
             el.toggleBarcode.checked = false;
+            el.textBadge.value = "md";
             
             el.scaleCategoryValue.textContent = "100%";
-            el.scaleBadgeValue.textContent = "165%";
+            el.scaleBadgeValue.textContent = "150%";
             el.scaleAisleLabelValue.textContent = "315%";
             el.scaleAisleNumberValue.textContent = "315%";
-            el.scaleSpaceLabelValue.textContent = "315%";
+            el.scaleSpaceLabelValue.textContent = "300%";
             el.scaleSpaceNumberValue.textContent = "315%";
-            el.sparkScaleValue.textContent = "125%";
+            el.sparkScaleValue.textContent = "190%";
         }
     });
 
