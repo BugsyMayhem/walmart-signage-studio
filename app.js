@@ -628,12 +628,11 @@ function initApplication() {
         
         let autoFitSpaceNum = 1.0;
         if (spaceCharLen > 1) {
-            // "SPACE" text width is approx (spaceLabelFontSize * 3.4).
-            // N-digit number width is approx (N * 0.70 * spaceValueFontSize).
-            // To ensure (N * 0.70 * spaceValueFontSize) <= (3.4 * spaceLabelFontSize):
-            // (N * 0.70 * 0.185 * scaleSpaceNumber * autoFit) <= (3.4 * 0.055 * scaleSpaceLabel)
-            // autoFit <= (0.187 * scaleSpaceLabel) / (0.130 * N * scaleSpaceNumber) = (1.44 * scaleSpaceLabel) / (N * scaleSpaceNumber)
-            const maxFitToLabel = (1.44 * scaleSpaceLabel) / (spaceCharLen * scaleSpaceNumber);
+            // "SPACE" text width is approx (spaceLabelFontSize * 4.45) with 0.06em letter spacing.
+            // 2-digit number digit width factor is ~0.62 * spaceValueFontSize.
+            // (N * 0.62 * 0.185 * scaleSpaceNumber * autoFit) <= (4.45 * 0.055 * scaleSpaceLabel)
+            // autoFit <= (0.245 * scaleSpaceLabel) / (0.1147 * N * scaleSpaceNumber) = (2.13 * scaleSpaceLabel) / (N * scaleSpaceNumber)
+            const maxFitToLabel = (2.13 * scaleSpaceLabel) / (spaceCharLen * scaleSpaceNumber);
             autoFitSpaceNum = Math.min(1.0, maxFitToLabel);
         }
 
