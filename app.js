@@ -622,10 +622,20 @@ function initApplication() {
         const scaleSpaceLabel = (state.scaleSpaceLabel || state.scaleSpace || 375) / 100;
         const scaleSpaceNumber = (state.scaleSpaceNumber || state.scaleSpace || 375) / 100;
         
-        // Auto-fit multi-digit numbers (e.g. 200, 100, 800, 900) so they fit cleanly inside sign margins
+        // Auto-fit multi-digit numbers (e.g. 20, 800, 900) so space number width NEVER exceeds the width of the "SPACE" label
         const spaceStr = (spaceValue || "").toString().trim();
         const spaceCharLen = spaceStr.length;
-        const autoFitSpaceNum = spaceCharLen <= 1 ? 1.0 : Math.min(1.0, 1.85 / spaceCharLen);
+        
+        let autoFitSpaceNum = 1.0;
+        if (spaceCharLen > 1) {
+            // "SPACE" text width is approx (spaceLabelFontSize * 3.4).
+            // N-digit number width is approx (N * 0.70 * spaceValueFontSize).
+            // To ensure (N * 0.70 * spaceValueFontSize) <= (3.4 * spaceLabelFontSize):
+            // (N * 0.70 * 0.185 * scaleSpaceNumber * autoFit) <= (3.4 * 0.055 * scaleSpaceLabel)
+            // autoFit <= (0.187 * scaleSpaceLabel) / (0.130 * N * scaleSpaceNumber) = (1.44 * scaleSpaceLabel) / (N * scaleSpaceNumber)
+            const maxFitToLabel = (1.44 * scaleSpaceLabel) / (spaceCharLen * scaleSpaceNumber);
+            autoFitSpaceNum = Math.min(1.0, maxFitToLabel);
+        }
 
         const aisleStr = (aisleVal || "").toString().trim();
         const aisleCharLen = aisleStr.length;
@@ -688,9 +698,9 @@ function initApplication() {
             }
         }
 
-        // Divider coordinates
-        const divider1Y = h * 0.305;
-        const divider2Y = h * 0.525;
+        // Balanced Section Dividers (Providing ample leading and breathing room)
+        const divider1Y = h * 0.31;
+        const divider2Y = h * 0.58;
         const dividerWidth = w * 0.72;
         const dividerX = w / 2 - dividerWidth / 2;
 
@@ -723,9 +733,9 @@ function initApplication() {
             let topBoundary = topBarHeight;
             if (state.decalSpark === "top-header" && window.WalmartSpark) {
                 const sparkSize = w * 0.12 * sparkScale;
-                topBoundary = h * 0.075 + sparkSize / 2;
+                topBoundary = h * 0.065 + sparkSize / 2;
             }
-            badgeY = (topBoundary + divider1Y) / 2;
+            badgeY = (topBoundary + divider1Y) / 2 + h * 0.01;
         }
         let badgeHtml = "";
         
@@ -742,11 +752,15 @@ function initApplication() {
             <text x="${w / 2}" y="${badgeY}" fill="${signBg}" class="sign-text text-extra-bold" font-size="${pillBadgeFontSize}" dy="0.32em">${state.textBadge}</text>`;
         }
 
-        // Aisle & Space coordinate adjustments
-        const aisleLabelY = h * 0.355;
-        const aisleValueY = h * 0.44;
-        const spaceLabelY = h * 0.58;
-        const spaceValueY = h * 0.67;
+        // Section 2 (AISLE): Range [0.31, 0.58]. Total section height = 0.27h.
+        const aisleLabelY = h * 0.37;
+        const aisleValueY = h * 0.485;
+        
+        // Section 3 (SPACE): Range [0.58, 0.85]. Total section height = 0.27h.
+        // For scaled multi-digit numbers, pull Y up dynamically so leading space stays identical to single-digit signs.
+        const spaceLabelY = h * 0.64;
+        const defaultValueOffset = h * 0.115;
+        const spaceValueY = spaceLabelY + defaultValueOffset * Math.pow(autoFitSpaceNum, 0.45);
 
         // Barcode sticker area details
         let stickerBoxHtml = "";
