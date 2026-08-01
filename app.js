@@ -627,12 +627,13 @@ function initApplication() {
         const spaceCharLen = spaceStr.length;
         
         let autoFitSpaceNum = 1.0;
-        if (spaceCharLen > 1) {
-            // "SPACE" text width is approx (spaceLabelFontSize * 4.45) with 0.06em letter spacing.
-            // 2-digit number digit width factor is ~0.62 * spaceValueFontSize.
-            // (N * 0.62 * 0.185 * scaleSpaceNumber * autoFit) <= (4.45 * 0.055 * scaleSpaceLabel)
-            // autoFit <= (0.245 * scaleSpaceLabel) / (0.1147 * N * scaleSpaceNumber) = (2.13 * scaleSpaceLabel) / (N * scaleSpaceNumber)
-            const maxFitToLabel = (2.13 * scaleSpaceLabel) / (spaceCharLen * scaleSpaceNumber);
+        if (spaceCharLen === 2) {
+            // Keep 2-digit numbers at perfect size
+            const maxFitToLabel = (1.80 * scaleSpaceLabel) / (spaceCharLen * scaleSpaceNumber);
+            autoFitSpaceNum = Math.min(1.0, maxFitToLabel);
+        } else if (spaceCharLen >= 3) {
+            // Reduce 3+ digit numbers to be slightly smaller
+            const maxFitToLabel = (1.44 * scaleSpaceLabel) / (spaceCharLen * scaleSpaceNumber);
             autoFitSpaceNum = Math.min(1.0, maxFitToLabel);
         }
 
